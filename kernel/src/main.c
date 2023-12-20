@@ -13,6 +13,12 @@ LIMINE_BASE_REVISION(1)
 // the compiler does not optimise them away, so, in C, they should
 // NOT be made "static".
 
+struct limine_paging_mode_request paging_mode_request = {
+    .id = LIMINE_PAGING_MODE_REQUEST,
+    .revision = 0,
+    .mode = LIMINE_PAGING_MODE_X86_64_4LVL
+};
+
 // GCC and Clang reserve the right to generate calls to the following
 // 4 functions even if they are not directly called.
 // Implement them as the C specification mandates.
