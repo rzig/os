@@ -4,7 +4,7 @@ override MAKEFLAGS += -rR
 # This is the name that our final kernel executable will have.
 # Change as needed.
 override KERNEL := kernel
-override OS := vrjos
+override OS := gladOS
 # Convenience macro to reliably declare user overridable variables.
 define DEFAULT_VAR =
     ifeq ($(origin $1),default)
@@ -70,15 +70,15 @@ override LDFLAGS += \
 # Internal nasm flags that should not be changed by the user.
 override NASMFLAGS += \
     -Wall \
-    -f elf64
+    -f elf
 
 # Use "find" to glob all *.c, *.S, and *.asm files in the tree and obtain the
 # object and header dependency file names.
 override CFILES := $(shell cd src && find -L * -type f -name '*.c')
-override ASFILES := $(shell cd src && find -L * -type f -name '*.s')
+override ASFILES := $(shell cd src && find -L * -type f -name '*.S')
 override NASMFILES := $(shell cd src && find -L * -type f -name '*.asm')
-override OBJ := $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.s=.s.o) $(NASMFILES:.asm=.asm.o))
-override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
+override OBJ := $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
+override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 
 # Default target.
 .PHONY: all
@@ -104,7 +104,7 @@ obj/%.c.o: src/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 # Compilation rules for *.S files.
-obj/%.s.o: src/%.s
+obj/%.S.o: src/%.S
 	mkdir -p "$$(dirname $@)"
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
@@ -117,7 +117,3 @@ obj/%.asm.o: src/%.asm
 .PHONY: clean
 clean:
 	rm -rf bin obj
-
-.PHONY: distclean
-distclean: clean
-	rm -f src/limine.h

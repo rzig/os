@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
- 
+#include "gdt.h"
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -95,8 +95,14 @@ void terminal_putchar(char c)
  
 void terminal_write(const char* data, size_t size) 
 {
-	for (size_t i = 0; i < size; i++)
-		terminal_putchar(data[i]);
+	for (size_t i = 0; i < size; i++) {
+		if (data[i] == '\n') {
+			terminal_row++;
+			terminal_column = 0;
+		} else {
+			terminal_putchar(data[i]);
+		}
+	}
 }
  
 void terminal_writestring(const char* data) 
@@ -112,4 +118,21 @@ void kernel_main(void)
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Heyo this works \n");
 	terminal_writestring("What the heck\n");
+
+	GDTEntry gdt_main[] = {
+        GDTEntry(0,0,0,0),  // start with the null descriptor
+        GDTEntry(0, 0xFFFFF, CODE_READABLE | CODE | KERNEL | PRESENT, GRANULARITY_4K | PROTMODE ), 
+        GDTEntry(0, 0xFFFFF, DATA_WRITEABLE | DATA | KERNEL | PRESENT, GRANULARITY_4K | PROTMODE), 
+		GDTEntry(0, 0xFFFFF, CODE_READABLE | CODE | USER | PRESENT, GRANULARITY_4K | PROTMODE ), 
+        GDTEntry(0, 0xFFFFF, DATA_WRITEABLE | DATA | USER | PRESENT, GRANULARITY_4K | PROTMODE), 
+        // add support for the tss in the future
+    };
+
+	GTDDescriptor curr_desc = {
+		sizeof(gdt_main), 
+		gdt_main
+	};
+	setup_gdt(&curr_desc, KERNEL_CODE_SEGMENT, KERNEL_DATA_SEGMENT);
+
+	terminal_writestring("setup the gdt!\n");
 }
