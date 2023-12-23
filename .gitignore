@@ -1,2 +1,5 @@
-limine/
-template.iso
+bin/
+isodir/
+*.o
+*.bin
+*.iso
