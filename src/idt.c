@@ -12,7 +12,6 @@ void start_idt() {
     // now time for the stub code hmm
     set_idtr(&idtr_val);
     setupISR();
-    enable_interrupts();
 }
 
 // sets the idt entry up
@@ -30,6 +29,9 @@ void __attribute__((cdecl)) exn_handler(exn_info register_values){
     buffer[3] = '\n';
     buffer[4] = '\0';
     terminal_writestring(buffer);
+    if (register_values.int_number >= 32) {
+        terminal_writestring("error from pic!\n");
+    }
 }
 
 void __attribute__((cdecl)) ISR_ERRROUTINE0();

@@ -4,6 +4,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "utilities.h"
+#include "pic.h"
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -28,6 +29,9 @@ void kernel_main(void)
 	terminal_writestring("setup the gdt!\n");
 	start_idt();
 	terminal_writestring("omg idt works maybe??\n");
-	__asm("int $0x0F");
+	initialize_pic();
 	terminal_writestring("hmm okay\n");
+	enable_interrupts();
+	__asm("int $0x1D");
+	__asm("int $0x1F");
 }
