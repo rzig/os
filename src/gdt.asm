@@ -3,7 +3,7 @@
 ; void __attribute__((cdecl)) i686_GDT_Load(GDTDescriptor* descriptor, uint16_t codeSegment, uint16_t dataSegment);
 global setup_gdt
 setup_gdt:
-    
+    cli ; we will turn this back on with sti after we finish setting up the idt(and paging?)
     ; make new call frame
     push ebp             ; save old call frame
     mov ebp, esp         ; initialize new call frame
@@ -35,5 +35,4 @@ setup_gdt:
 .check: 
     mov eax, 0x2f592f41
     mov dword [0xb8000], eax
-    hlt
     ret
