@@ -85,6 +85,9 @@ override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 .PHONY: all
 all: bin/$(OS)
 
+run: bin/$(OS)
+	qemu-system-x86_64 -M q35 -m 4G -cdrom $(OS).iso -boot d
+
 bin/$(OS): bin/$(KERNEL).bin
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin
 	echo menuentry "$(OS)" { multiboot /boot/$(KERNEL).bin } > grub.cfg
