@@ -5,6 +5,7 @@
 #include "idt.h"
 #include "utilities.h"
 #include "pic.h"
+#include "paging.h"
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -34,4 +35,6 @@ void kernel_main(void)
 	enable_interrupts();
 	__asm("int $0x1D");
 	__asm("int $0x1F");
+	init_pagetables();
+	terminal_writestring("paging init\n");
 }
