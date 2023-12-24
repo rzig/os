@@ -82,13 +82,15 @@ override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.s=.s.d))
 
 # Default target.
 .PHONY: all
+run: bin/$(OS)
+	qemu-system-x86_64 -M q35 -m 4g -cdrom $(OS).iso -boot d -monitor stdio
 all: bin/$(OS)
 
 bin/$(OS): bin/$(KERNEL).bin
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin
 	echo menuentry "$(OS)" { multiboot /boot/$(KERNEL).bin } > grub.cfg
 	cp grub.cfg isodir/boot/grub/grub.cfg
-	grub-mkrescue -o $(OS).iso isodir
+	grub2-mkrescue -o $(OS).iso isodir
 
 # Link rules for the final kernel executable.
 bin/$(KERNEL).bin: linker.ld $(OBJ)
@@ -117,7 +119,3 @@ obj/%.asm.o: src/%.asm
 .PHONY: clean
 clean:
 	rm -rf bin obj
-
-.PHONY: distclean
-distclean: clean
-	rm -f src/limine.h

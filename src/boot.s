@@ -30,6 +30,30 @@ System V ABI standard and de-facto extensions. The compiler will assume the
 stack is properly aligned and failure to align the stack will result in
 undefined behavior.
 */
+.section .data
+
+
+gdt:
+gdt_null:
+	.quad 0
+kernel_code:
+	.word 0x0FFFF
+	.word 0
+	.byte 0
+	.byte 0b10011010
+	.byte 0b11001111
+kernel_data:
+	.word 0x0FFFF
+	.word 0
+	.byte 0
+	.byte 0b10010010
+	.byte 0b11001111
+gdt_end:
+
+gdt_desc:
+	.byte . - gdt
+gdt_desc_loc:
+	.word 0
 .section .bss
 .align 16
 stack_bottom:
@@ -42,6 +66,28 @@ bootloader will jump to this position once the kernel has been loaded. It
 doesn't make sense to return from this function as the bootloader is gone.
 */
 .section .text
+
+
+# gdt:
+# gdt_null:
+# 	.quad 0
+# kernel_code:
+# 	.word 0x0FFFF
+# 	.word 0
+# 	.byte 0
+# 	.byte 0b10011010
+# 	.byte 0b11001111
+# kernel_data:
+# 	.word 0x0FFFF
+# 	.word 0
+# 	.byte 0
+# 	.byte 0b10010010
+# 	.byte 0b11001111
+# gdt_end:
+
+# gtd_desc:
+# 	.byte . - gdt
+# 	.word gdt
 .global _start
 .type _start, @function
 _start:
@@ -75,7 +121,11 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
-
+	mov $gdt, gdt_desc_loc
+	cli
+	xor %ax, %ax
+	mov %ds, %ax
+	lgdt gdt_desc
 	/*
 	Enter the high-level kernel. The ABI requires the stack is 16-byte
 	aligned at the time of the call instruction (which afterwards pushes
@@ -107,3 +157,25 @@ Set the size of the _start symbol to the current location '.' minus its start.
 This is useful when debugging or when you implement call tracing.
 */
 .size _start, . - _start
+
+# .section .data
+# gdt:
+# gdt_null:
+# 	.quad 0
+# kernel_code:
+# 	.word 0x0FFFF
+# 	.word 0
+# 	.byte 0
+# 	.byte 0b10011010
+# 	.byte 0b11001111
+# kernel_data:
+# 	.word 0x0FFFF
+# 	.word 0
+# 	.byte 0
+# 	.byte 0b10010010
+# 	.byte 0b11001111
+# gdt_end:
+
+# gtd_desc:
+# 	.byte . - gdt
+# 	.word gdt_null
