@@ -4,6 +4,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "utilities.h"
+#include "paging.h"
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -30,4 +31,6 @@ void kernel_main(void)
 	terminal_writestring("omg idt works maybe??\n");
 	__asm("int $0x0F");
 	terminal_writestring("hmm okay\n");
+	init_pagetables();
+	terminal_writestring("paging init\n");
 }
