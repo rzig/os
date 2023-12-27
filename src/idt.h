@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "gdt.h"
 #include "utilities.h"
-
+#include "pic.h"
 void setupISR();
 
 typedef struct {
@@ -46,4 +46,5 @@ void set_entry(int entry_number, uint8_t flags, uint16_t segment_selector, void*
 
 void start_idt();
 void __attribute__((cdecl)) enable_interrupts(); // just calls the STI instruction 
-void __attribute__((cdecl)) exn_handler(exn_info register_values); 
+void __attribute__((cdecl)) int_handler(exn_info register_values); 
+void __attribute__((cdecl)) exn_handler(); // do nothing for now, some exceptions we may be able to recover from (e.g. page fault but don't have a good method for dealing with this right now)

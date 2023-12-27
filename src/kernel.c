@@ -27,14 +27,25 @@ void kernel_main(void)
 	terminal_writestring("Heyo this works \n");
 	terminal_writestring("What the heck\n");
 	start_gdt();
+	init_pagetables();
 	terminal_writestring("setup the gdt!\n");
 	start_idt();
 	terminal_writestring("omg idt works maybe??\n");
-	initialize_pic();
+	initialize_pic(); // how can I tell if this is working?
 	terminal_writestring("hmm okay\n");
 	enable_interrupts();
-	__asm("int $0x1D");
-	__asm("int $0x1F");
-	init_pagetables();
 	terminal_writestring("paging init\n");
+	uint16_t output1 = 42;
+	uint16_t output2 = pic_get_isr();
+	char buffer1[10]; 
+	char buffer2[10];
+	itoa(buffer1, 'd', output1);
+	itoa(buffer2, 'd', output2);
+	buffer1[strlen(buffer1)] = '\n';
+	buffer2[strlen(buffer2)] = '\n';
+	terminal_writestring("buffer1: ");
+	terminal_writestring(buffer1);
+	terminal_writestring("buffer 2:");
+	terminal_writestring(buffer2);
+	dead_hang();
 }

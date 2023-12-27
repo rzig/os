@@ -65,3 +65,5 @@ void terminal_write(const char* data, size_t size);
 void terminal_writestring(const char* data);
 void itoa (char *buf, int base, int d);
 size_t strlen(const char* str);
+void __attribute__((cdecl)) fail_cpu ();
+void __attribute__((cdecl)) dead_hang();

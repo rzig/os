@@ -2,7 +2,7 @@
 // declare IDT constants in global memory(originally I did them in Kernel memory for GDT which I will move at some point)
 // Entries 22-31 are intel reserved, look into if we should still generate exceptions for these!
 IDTEntry idt_entries[256]; // create 256 entries
-
+static int interrupt_counter = 0;
 idtr_entry idtr_val = {
     sizeof(idt_entries) - 1, 
     idt_entries // pointer to the start of the idt (32 bit address)
@@ -22,15 +22,34 @@ void set_entry(int entry_number, uint8_t flags, uint16_t segment_selector, void*
     idt_entries[entry_number].offset_low = (uint32_t)offset & 0xFFFF;
 }
 
-void __attribute__((cdecl)) exn_handler(exn_info register_values){ 
-    terminal_writestring("the following exception was called\n");
-    char buffer[5];
-    itoa(buffer, 'd', register_values.int_number);
-    buffer[3] = '\n';
-    buffer[4] = '\0';
-    terminal_writestring(buffer);
+void __attribute__((cdecl)) int_handler(exn_info register_values){ 
+    
     if (register_values.int_number >= 32) {
-        terminal_writestring("error from pic!\n");
+        if (register_values.int_number != 32 ) {
+            terminal_writestring("error from pic!\n");
+            terminal_writestring("the following exception was called\n");
+            char buffer[10];
+            itoa(buffer, 'd', register_values.int_number);
+            buffer[strlen(buffer)] = '\n';
+            terminal_writestring(buffer);
+            if (register_values.int_number != 39 && register_values.int_number != 47) {
+                if (register_values.int_number == 33) {
+                    // handle keyboard
+                }
+                PIC_sendEOI(register_values.int_number - 32);
+            }
+        } else {
+            PIC_sendEOI(register_values.int_number - 32);
+        }
+    } else {
+        terminal_writestring("exception!!!\n");
+        char buffer2[20];
+        itoa(buffer2, 'd', interrupt_counter);
+        terminal_writestring("we have called this many times: ");
+        buffer2[strlen(buffer2)] = '\n';
+        terminal_writestring(buffer2);
+        interrupt_counter ++;     
+        exn_handler();
     }
 }
 

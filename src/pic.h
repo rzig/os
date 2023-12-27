@@ -20,3 +20,7 @@ void OCW(uint8_t flags);
 void setup_addr(uint8_t icw1_flags, uint8_t isr_offset, uint8_t master_slave_id, uint8_t icw4_flags);
 
 void initialize_pic(); // call with predefined flags
+uint16_t pic_get_irr(); 
+uint16_t pic_get_isr();
+
+void PIC_sendEOI(unsigned char irq);

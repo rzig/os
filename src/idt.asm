@@ -1,6 +1,6 @@
 [bits 32]
 
-extern exn_handler 
+extern int_handler 
 
 check: 
     mov eax, 0x2f592f41
@@ -18,7 +18,7 @@ common_isr:
     mov fs, ax
     mov gs, ax ; don't change the stack segment?
     push esp ; this is used for returning
-    call exn_handler ; at some point perhaps create a unique execption handler? 
+    call int_handler ; at some point perhaps create a unique execption handler? 
     add esp, 4 ; slowly restore the stack (don't want to  store the stack in the stack though)
     pop eax 
     mov ds, ax
@@ -46,7 +46,10 @@ ISR_ERRROUTINE%1:
     jmp common_isr
 %endmacro 
 
-
+global exn_handler
+exn_handler:
+    hlt
+    jmp exn_handler ; halt the processor if we encounter an exception, not much else that we can do right now. 
 
 
 global set_idtr; again we will use cdecl to make things easier
@@ -65,7 +68,6 @@ set_idtr:
 
 global enable_interrupts
 enable_interrupts: 
-    call check
     sti ; literally it
     ret
 
