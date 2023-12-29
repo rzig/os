@@ -66,6 +66,7 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) ;
 void terminal_putchar(char c);
 void terminal_write(const char* data, size_t size);
 void terminal_writestring(const char* data);
+
 void itoa (char *buf, int base, int d);
 size_t strlen(const char* str);
 void __attribute__((cdecl)) fail_cpu ();
@@ -79,3 +80,7 @@ int memcmp(const void* s1, const void* s2, size_t n);
 
 
 void printf(char* format, ...); // variable number of args after this
+void printf_top(char* format, ...);
+
+//a very basic implementation that only works for positive non zero numbers
+int intLog2(int input);

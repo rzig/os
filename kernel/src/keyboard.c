@@ -71,8 +71,10 @@ void keyboard_init() {
         io_wait();
         outb(0x60, config);
     }
+
     outb(0x60, 0xF0);
     outb(0x60, 0x01);
     uint8_t status = inb(0x60);
+    
     printf("finished ps2 init\n");
 }

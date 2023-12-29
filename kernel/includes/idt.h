@@ -4,6 +4,7 @@
 #include "utilities.h"
 #include "pic.h"
 #include "keyboard.h"
+#include "rtc.h"
 void setupISR();
 
 typedef struct {

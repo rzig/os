@@ -8,6 +8,7 @@
 #include "paging.h"
 #include "keyboard.h"
 #include "tss.h"
+#include "rtc.h"
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -28,8 +29,11 @@ void kernel_main(void)
 	setup_tss();
 	init_pagetables();
 	start_idt();
-	initialize_pic(); // how can I tell if this is working?'
+	initialize_pic(); // L PIC
 	keyboard_init();
-	enable_interrupts();
-	dead_hang();
+	set_rtc_freq(128);
+	start_rtc();
+	set_timezone(EST);
+	enable_interrupts(); // after everything has been completed enable interrupts
+	dead_hang(); // idk what else to call this, just loop indefinitely?
 }

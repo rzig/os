@@ -67,6 +67,8 @@ void initialize_pic() {
 	io_wait();
 	outb(PIC_S_DATA, E8086);
 	io_wait();
+
+	//ICWs have been sent, now turn off the interrupt masks
     outb(PIC_M_DATA, 0);
     io_wait();
     outb(PIC_S_DATA, 0);
