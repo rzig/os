@@ -3,6 +3,7 @@
 #include "gdt.h"
 #include "utilities.h"
 #include "pic.h"
+#include "keyboard.h"
 void setupISR();
 
 typedef struct {
@@ -42,7 +43,7 @@ typedef struct {
 } __attribute__((packed)) exn_info;
 
 void __attribute__((cdecl)) set_idtr(idtr_entry* entry);
-void set_entry(int entry_number, uint8_t flags, uint16_t segment_selector, void* offset); 
+void set_idt_entry(int entry_number, uint8_t flags, uint16_t segment_selector, void* offset); 
 
 void start_idt();
 void __attribute__((cdecl)) enable_interrupts(); // just calls the STI instruction 

@@ -1,3 +1,6 @@
+#add includes to include path
+export C_INCLUDE_PATH=kernel/includes
+
 # Nuke built-in rules and variables.
 override MAKEFLAGS += -rR
 
@@ -74,19 +77,18 @@ override NASMFLAGS += \
 
 # Use "find" to glob all *.c, *.S, and *.asm files in the tree and obtain the
 # object and header dependency file names.
-override CFILES := $(shell cd src && find -L * -type f -name '*.c')
-override ASFILES := $(shell cd src && find -L * -type f -name '*.S')
-override NASMFILES := $(shell cd src && find -L * -type f -name '*.asm')
-override HEADERS := $(shell cd src && find -L * -type f -name '*.h')
+override CFILES := $(shell cd kernel/src && find -L * -type f -name '*.c')
+override ASFILES := $(shell cd kernel/assembly && find -L * -type f -name '*.S')
+override NASMFILES := $(shell cd kernel/assembly && find -L * -type f -name '*.asm')
+override HEADERS := $(shell cd kernel/includes && find -L * -type f -name '*.h')
 override OBJ := $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
-override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 
 # Default target.
 .PHONY: all
 all: bin/$(OS)
 
 run: bin/$(OS)
-	qemu-system-x86_64 -M q35 -m 4G -cdrom $(OS).iso -boot d
+	qemu-system-x86_64 -M q35 -m 4G -cdrom $(OS).iso -boot d -monitor stdio
 
 bin/$(OS): bin/$(KERNEL).bin
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin
@@ -99,21 +101,18 @@ bin/$(KERNEL).bin: linker.ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
 	$(LD) $(OBJ) $(LDFLAGS) -o $@
 
-# Include header dependencies.
--include $(HEADER_DEPS)
-
 # Compilation rules for *.c files.
-obj/%.c.o: src/%.c
+obj/%.c.o: kernel/src/%.c
 	mkdir -p "$$(dirname $@)"
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 # Compilation rules for *.S files.
-obj/%.S.o: src/%.S
+obj/%.S.o: kernel/assembly/%.S
 	mkdir -p "$$(dirname $@)"
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 # Compilation rules for *.asm (nasm) files.
-obj/%.asm.o: src/%.asm
+obj/%.asm.o: kernel/assembly/%.asm
 	mkdir -p "$$(dirname $@)"
 	nasm $(NASMFLAGS) $< -o $@
 

@@ -56,12 +56,8 @@ global set_idtr; again we will use cdecl to make things easier
 
 set_idtr: 
     cli
-    push ebp ; push the original value to the stack 
-    mov ebp, esp ; move the new value 
-    mov eax, [ebp + 8] ; the pointer to the start address of the idt entry (like we could use ebp or esp both are the same, we aren't really following the convention here because we aren't chaining multiple function calls)
-    lidt [eax] ; load the value stored in eax to the ir 
-    mov esp, ebp ; restore the original value of the stack beginning
-    pop ebp 
+    mov eax, [esp + 4] ; the pointer to the start address of the idt entry (like we could use ebp or esp both are the same, we aren't really following the convention here because we aren't chaining multiple function calls)
+    lidt [eax] ; 
     ret ; return to the caller
 
 

@@ -2,6 +2,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+#define PTR_WIDTH 8
+
 /* Hardware text mode color constants. */
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
@@ -67,3 +70,12 @@ void itoa (char *buf, int base, int d);
 size_t strlen(const char* str);
 void __attribute__((cdecl)) fail_cpu ();
 void __attribute__((cdecl)) dead_hang();
+
+void* memset(void* s, int c, size_t n);
+void* memcpy(void* dest, const void* src,
+                    size_t n);
+//void *memmove(void dest[.n], const void src[.n], size_t n); I believe we need malloc before doing this
+int memcmp(const void* s1, const void* s2, size_t n);
+
+
+void printf(char* format, ...); // variable number of args after this

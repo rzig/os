@@ -23,6 +23,7 @@ typedef enum {
 
 
 
+
 #define LIMIT_LOW(limit) (limit & 0xFFFF)
 #define BASE_LOW(base) (base & 0xFFFF)
 #define BASE_MED(base) ((base >> 16) & 0xFF)
@@ -39,13 +40,15 @@ typedef enum {
 }
 
 
+
+
 GDTEntry gdt_main[] = {
         GDTEntry(0,0,0,0),  // start with the null descriptor
         GDTEntry(0, 0xFFFFF, CODE_READABLE | CODE | KERNEL | PRESENT, GRANULARITY_4K | PROTMODE ), 
         GDTEntry(0, 0xFFFFF, DATA_WRITEABLE | DATA | KERNEL | PRESENT, GRANULARITY_4K | PROTMODE), 
 		GDTEntry(0, 0xFFFFF, CODE_READABLE | CODE | USER | PRESENT, GRANULARITY_4K | PROTMODE ), 
         GDTEntry(0, 0xFFFFF, DATA_WRITEABLE | DATA | USER | PRESENT, GRANULARITY_4K | PROTMODE), 
-        // add support for the tss in the future
+        GDTEntry(0, 0, KERNEL | PRESENT | 0b01 | 0b1000 , 0x0), // set tss to zero for now and update later
 };
 
 GTDDescriptor curr_desc = {
@@ -57,4 +60,14 @@ void start_gdt() {
     setup_gdt(&curr_desc, KERNEL_CODE_SEGMENT, KERNEL_DATA_SEGMENT);
 }
 
-
+void set_gdt_entry(GDTEntry* current, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+    current->limit_low = LIMIT_LOW(limit);
+    current->base_low = BASE_LOW(base);
+    current->base_med = BASE_MED(base);
+    current->access = access;
+    current->flags =  (((flags) & 0xF0)  | LIMIT_HIGH(limit));
+    current->base_high = BASE_HIGH(base);
+}
+GDTEntry* get_entry(int idx) {
+    return gdt_main + idx;
+}

@@ -2,6 +2,8 @@
 
 #include "utilities.h"
 #include <stdint.h>
+#include "keyboard.h"
+#define ATKBD_KEYMAP_SIZE       512
 /***
  * PIC is the programmable interrupt controller, first we need to setup master and slave then we need to set which ports the PIC 
  * should report too
@@ -24,3 +26,4 @@ uint16_t pic_get_irr();
 uint16_t pic_get_isr();
 
 void PIC_sendEOI(unsigned char irq);
+void PIC_remap();
