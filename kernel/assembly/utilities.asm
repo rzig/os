@@ -9,4 +9,5 @@ fail_cpu:
 
 global dead_hang
 dead_hang:
+    hlt ; wait until next interrupt
     jmp dead_hang
