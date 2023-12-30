@@ -26,28 +26,7 @@ void set_idt_entry(int entry_number, uint8_t flags, uint16_t segment_selector, v
 void __attribute__((cdecl)) int_handler(exn_info register_values){ 
     
     if (register_values.int_number >= 32) {
-        if (register_values.int_number != 32 ) {
-            if (register_values.int_number != 39 && register_values.int_number != 47) {
-                
-                if (register_values.int_number == 33) {
-                    uint8_t scan_code = inb(0x60);
-                    unsigned char out_char = atkbd_set1_keycode[scan_code];
-                    if (out_char < 128 && out_char != 0) {
-                        terminal_putchar(out_char);
-                    }
-                    if (out_char == SPACE_PRESSED) {
-                        terminal_putchar(0);
-                    }
-                } else if (register_values.int_number == 40) {
-                    outb(0x70, 0x0C);
-                    inb(0x71);
-                    rtc_display_clock();
-                }
-                PIC_sendEOI(register_values.int_number - 32);
-            }
-        } else {
-            PIC_sendEOI(register_values.int_number - 32);
-        }
+        execute_user_int(register_values);
     } else {
         terminal_writestring("exception!!!\n");
         char buffer2[20];

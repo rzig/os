@@ -55,19 +55,20 @@ void rtc_display_clock() {
     io_wait();
     if (!binary_mode) {
         if (!military_time && (hours & 0x80)) {
-            hours &= 0x3F; // 
+            hours = ((hours >> 4) * 10) + (hours % 16); // convert back to decimal
             hours += current_timezone;
             if (minutes >= 10) {
-                printf_top("%h:%hpm  %h/%h/%h", hours, minutes, month, day, year);
+                printf_top("%d:%hpm  %h/%h/%h", hours, minutes, month, day, year);
             } else {
-                printf_top("%h:0%hpm  %h/%h/%h", hours, minutes, month, day, year);
+                printf_top("%d:0%hpm  %h/%h/%h", hours, minutes, month, day, year);
             }
         } else {
+            hours = ((hours >> 4) * 10) + (hours % 16); // convert back to decimal
             hours += current_timezone;
             if (minutes >= 10) {
-                printf_top("%h:%h  %h/%h/%h", hours, minutes, month, day, year);
+                printf_top("%d:%h  %h/%h/%h", hours, minutes, month, day, year);
             } else {
-                printf_top("%h:0%h  %h/%h/%h", hours, minutes, month, day, year);
+                printf_top("%d:0%h  %h/%h/%h", hours, minutes, month, day, year);
             }
         }
     } else {

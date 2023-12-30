@@ -2,9 +2,7 @@
 #include <stdint.h>
 #include "gdt.h"
 #include "utilities.h"
-#include "pic.h"
-#include "keyboard.h"
-#include "rtc.h"
+#include "user_isr.h"
 void setupISR();
 
 typedef struct {
@@ -33,15 +31,6 @@ typedef enum {
     TRAP_GATE32 = (0x0F),
 } idt_flags;
 
-typedef struct {
-    uint32_t ds; // from push ax but stack is 32 bit aligned
-    uint32_t edi, esi, ebp, kern_esp, ebx, edx, ecx, eax; 
-    uint32_t exn_code, int_number;
-    uint32_t eip;
-    uint32_t cs; 
-    uint32_t eflags, esp;
-    uint32_t ss;
-} __attribute__((packed)) exn_info;
 
 void __attribute__((cdecl)) set_idtr(idtr_entry* entry);
 void set_idt_entry(int entry_number, uint8_t flags, uint16_t segment_selector, void* offset); 

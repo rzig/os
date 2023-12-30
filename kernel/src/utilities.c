@@ -5,6 +5,7 @@ static size_t terminal_row;
 static size_t terminal_column;
 static uint8_t terminal_color;
 static uint16_t* terminal_buffer;
+static char last_char; 
 
 void terminal_initialize(void) 
 {
@@ -30,7 +31,19 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 }
- 
+
+void terminal_remove_last() {
+  if (terminal_column == 0) {
+    if (terminal_row > 1) {
+      terminal_row--;
+      terminal_column = VGA_WIDTH - 1;
+    }
+  } else {
+    terminal_column--;
+  }
+  terminal_putentryat(0, terminal_color, terminal_column, terminal_row);
+}
+
 void terminal_putchar(char c) 
 {
   if (c == '\n') {
@@ -39,7 +52,14 @@ void terminal_putchar(char c)
             if (terminal_row > VGA_HEIGHT) {
                 terminal_row  = 0;
             }
-	} else {
+	} else if(c == '\t') {
+    for (int i = 0; i < TAB_LENGTH; i++) {
+      terminal_column++;
+      if (terminal_column > VGA_WIDTH)
+        terminal_column = 0;
+    }
+  }
+  else {
     terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
     if (++terminal_column == VGA_WIDTH) {
       terminal_column = 0;
@@ -47,6 +67,7 @@ void terminal_putchar(char c)
         terminal_row = 1; // reserve the top row for the date
     }
   }
+  last_char = c;
 }
  
 void terminal_write(const char* data, size_t size) 

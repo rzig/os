@@ -1,6 +1,13 @@
 #include "keyboard.h"
 
+static bool shift_on = false;
+static bool control_on = false;
+static bool caps_lock_on = false;
+static bool num_lock_on = false;
 
+static unsigned char alpha_top = 'a';
+static unsigned char alpha_bottom = 'z';
+static int alpha_offset = 'a' - 'A';
 
 void keyboard_init() {
     outb(0x64, 0xAD);// disable PS2 dev0
@@ -77,4 +84,121 @@ void keyboard_init() {
     uint8_t status = inb(0x60);
     
     printf("finished ps2 init\n");
+}
+
+uint16_t keyboard_parsekey(uint16_t key) {
+    if (key == CAPS_LOCK_PRESSED) {
+        caps_lock_on = ~caps_lock_on;
+    }
+    else if (key == NUMLOCK_PRESSED) {
+        num_lock_on = ~num_lock_on;
+    }
+    else if (key == SHIFT_PRESSED) {
+        shift_on = true;
+    }
+    else if (key == SHIFT_RELEASED) {
+        shift_on = false;
+    }
+    else if (caps_lock_on || shift_on) {
+        if (key >= alpha_top && key <= alpha_bottom) {
+            key -= alpha_offset;
+        } 
+        else if (key == '1') {
+            key = '!';
+        }
+        else if (key == '2') {
+            key = '@';
+        }
+        else if (key == '3') {
+            key = '~';
+        }
+        else if (key == '4') {
+            key = '$';
+        }
+        else if (key == '5') {
+            key = '%';
+        }
+        else if (key == '6') {
+            key = '^';
+        }
+        else if (key == '7') {
+            key = '&';
+        }
+        else if (key == '8') {
+            key = '*';
+        }
+        else if (key == '9') {
+            key = '(';
+        }
+        else if (key == '0') {
+            key = ')';
+        }
+        else if (key == '-') {
+            key = '_';
+        }
+        else if (key == '+') {
+            key = '=';
+        }
+        else if (key == '[') {
+            key = '{';
+        }
+        else if (key == ']') {
+            key = '}';
+        }
+        else if (key == '\\') {
+            key = '|';
+        }
+        else if (key == ';') {
+            key = ':';
+        }
+        else if (key == '\'') {
+            key = '\"';
+        }
+        else if (key == ',') {
+            key = '<';
+        }
+        else if (key == '.') {
+            key = '>';
+        }
+        else if (key == '/') {
+            key = '?';
+        }
+    }
+    else if (num_lock_on) {
+        if (key == ONEKP_PRESSED) {
+            key = '1';
+        } else if (key == TWOKP_PRESSED) {
+            key = '2';
+        }
+        else if (key == THREEKP_PRESSED) {
+            key = '3';
+        }
+        else if (key == FOURKP_PRESSED) {
+            key = '4';
+        }
+        else if (key == FIVEKP_PRESSED) {
+            key = '5';
+        }
+        else if (key == SIXKP_PRESSED) {
+            key = '6';
+        }
+        else if (key == SEVENKP_PRESSED) {
+            key = '7';
+        }
+        else if (key == EIGHTKP_PRESSED) {
+            key = '8';
+        }else if (key == NINEKP_PRESSED) {
+            key = '9';
+        } else if (key == ZEROKP_PRESSED) {
+            key = '0';
+        } else if (key == PERIODKP_PRESSED) {
+            key = '.';
+        } else if (key == PLUSKP_PRESSED) {
+            key = '+';
+        } else if (key == MINUSKP_PRESSED) {
+            key = '-';
+        }
+    }
+    
+    return key;
 }

@@ -4,6 +4,17 @@
 #include <stddef.h>
 
 #define PTR_WIDTH 8
+#define TAB_LENGTH 4
+
+typedef struct {
+    uint32_t ds; // from push ax but stack is 32 bit aligned
+    uint32_t edi, esi, ebp, kern_esp, ebx, edx, ecx, eax; 
+    uint32_t exn_code, int_number;
+    uint32_t eip;
+    uint32_t cs; 
+    uint32_t eflags, esp;
+    uint32_t ss;
+} __attribute__((packed)) exn_info;
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -64,6 +75,8 @@ void terminal_initialize(void);
 void terminal_setcolor(uint8_t color);
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) ;
 void terminal_putchar(char c);
+void terminal_remove_last();
+
 void terminal_write(const char* data, size_t size);
 void terminal_writestring(const char* data);
 

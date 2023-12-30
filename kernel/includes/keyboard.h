@@ -5,20 +5,60 @@
 
 void keyboard_init();
 
-#define CONTROL_PRESSED 0x80
-#define CONTROL_PRESSED 0x81
-#define SHIFT_PRESSED 0x82
-#define ALT_PRESSED 0x83
-#define CAPS_LOCK_PRESSED 0x84
-#define SPACE_PRESSED 0xD9 // pick unused value
+#define CONTROL_PRESSED 0xF000
+#define CONTROL_PRESSED 0xF001
+#define SHIFT_PRESSED 0xF002
+#define ALT_PRESSED 0xF003
+#define CAPS_LOCK_PRESSED 0xF004
+#define SPACE_PRESSED 0xFF05 // pick unused value
+#define F1_PRESSED 0xF006
+#define F2_PRESSED 0xF007
+#define F3_PRESSED 0xF008
+#define F4_PRESSED 0xF009
+#define F5_PRESSED 0xF00A
+#define F6_PRESSED 0xF00B
+#define F7_PRESSED 0xF00C
+#define F8_PRESSED 0xF00D
+#define F9_PRESSED 0xF00E
+#define F10_PRESSED 0xF00F
+#define NUMLOCK_PRESSED 0xF010
+#define SCROLL_LOCK_PRESSED 0xF011
+#define ONEKP_PRESSED 0xF012
+#define TWOKP_PRESSED 0xF013
+#define THREEKP_PRESSED 0xF014
+#define FOURKP_PRESSED 0xF015
+#define FIVEKP_PRESSED 0xF016
+#define SIXKP_PRESSED 0xF017
+#define SEVENKP_PRESSED 0xF018
+#define EIGHTKP_PRESSED 0xF019
+#define NINEKP_PRESSED 0xF01A
+#define ZEROKP_PRESSED 0xF01B
+#define PLUSKP_PRESSED 0xF01C
+#define MINUSKP_PRESSED 0xF01D
+#define PERIODKP_PRESSED 0xF01E
+#define F11_PRESSED 0xF01F
+#define F12_PRESSED 0xF020
+#define BACKSPACE_PRESSED 0xF021
+#define ESCAPE_PRESSED 0xF022
+#define CONTROL_RELEASED 0xF023
+#define SHIFT_RELEASED 0xF024
+#define ALT_RELEASED 0xF025
 
 #define ATKBD_KEYMAP_SIZE 512
 
-static const char atkbd_set1_keycode[ATKBD_KEYMAP_SIZE] = {
-    0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 8, 9,
+static const uint16_t atkbd_set1_keycode[ATKBD_KEYMAP_SIZE] = {
+    0, ESCAPE_PRESSED, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE_PRESSED, '\t',
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', CONTROL_PRESSED, 'a', 's', 
     'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', SHIFT_PRESSED, '\\', 'z', 'x', 'c', 'v', 
-    'b', 'n', 'm', ',', '.', '/', SHIFT_PRESSED, '*', ALT_PRESSED, SPACE_PRESSED, CAPS_LOCK_PRESSED
+    'b', 'n', 'm', ',', '.', '/', SHIFT_PRESSED, '*', ALT_PRESSED, SPACE_PRESSED, CAPS_LOCK_PRESSED, F1_PRESSED, F2_PRESSED, F3_PRESSED, F4_PRESSED, F5_PRESSED, 
+    F6_PRESSED, F7_PRESSED, F8_PRESSED, F9_PRESSED, F10_PRESSED, NUMLOCK_PRESSED, SCROLL_LOCK_PRESSED, SEVENKP_PRESSED, EIGHTKP_PRESSED, NINEKP_PRESSED, MINUSKP_PRESSED, FOURKP_PRESSED, FIVEKP_PRESSED, SIXKP_PRESSED, PLUSKP_PRESSED, ONEKP_PRESSED, 
+    TWOKP_PRESSED, THREEKP_PRESSED, ZEROKP_PRESSED, PERIODKP_PRESSED, 0, 0, 0, F11_PRESSED, F12_PRESSED, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CONTROL_RELEASED, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SHIFT_RELEASED, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, SHIFT_RELEASED, 0, ALT_RELEASED, 0, 0, 0, 0, 0, 0, 0,
 };
 
 static const unsigned char atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
@@ -56,3 +96,5 @@ static const unsigned short atkbd_set3_keycode[ATKBD_KEYMAP_SIZE] = {
           0,139,172,163,165,115,152,172,166,140,160,154,113,114,167,168,
         148,149,147,140
 };
+
+uint16_t keyboard_parsekey(uint16_t key);

@@ -1,3 +1,4 @@
+//https://wiki.osdev.org/CMOS#Accessing_CMOS_Registers
 #pragma once
 #include "utilities.h"
 #include <stdint.h>
