@@ -47,7 +47,7 @@ struct tar_header *get_file_header(void *addr, char *filename) {
     if (sz % 512)
       addr += 512;
   }
-  return 0;
+  return NULL;
 }
 
 void *contents(void *addr, char *filename) {
@@ -55,6 +55,6 @@ void *contents(void *addr, char *filename) {
   if(header) {
     return (void*) header + 512;
   } else {
-    return 0;
+    return NULL;
   }
 }

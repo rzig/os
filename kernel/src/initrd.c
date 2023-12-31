@@ -19,5 +19,5 @@ void *load_initrd(void *bif_addr) {
     }
   }
   printf("Could not find initrd, returning null pointer.");
-  return 0;
+  return NULL;
 }
