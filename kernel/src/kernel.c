@@ -19,7 +19,8 @@ void kernel_main(void)
 {
 	/* Initialize terminal interface */
 	terminal_initialize(); // this likely clobbers ebx
-	load_initrd(boot_info_loc);
+	void* initrd_loc = load_initrd(boot_info_loc);
+	printf("Loaded initrd at %d \n", initrd_loc);
 	start_gdt();
 	setup_tss();
 	init_pagetables();
