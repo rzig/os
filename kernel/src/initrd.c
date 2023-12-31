@@ -3,11 +3,7 @@
 /**
   * Return the start address of the initrd in memory
   */
-void* load_initrd() {
-  struct multiboot_tag* tag;
-  uint32_t* addr;
-  asm ("mov %%ebx, %0" : "=r" (addr));
-  uint32_t bif_size = *addr;
-  printf("bif_size is %d \n", bif_size);
+void* load_initrd(void* bif_addr) {
+  printf("in laod initrd %d \n", bif_addr);
   return 0;
 }

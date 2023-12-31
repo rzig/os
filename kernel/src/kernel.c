@@ -8,12 +8,18 @@
 #include "../includes/tss.h"
 #include "../includes/rtc.h"
 #include "../includes/initrd.h"
+
+static void* boot_info_loc;
+
+void kernel_init(void* bif_addr) {
+	boot_info_loc = bif_addr;
+}
  
 void kernel_main(void) 
 {
 	/* Initialize terminal interface */
-	terminal_initialize();
-	load_initrd();
+	terminal_initialize(); // this likely clobbers ebx
+	load_initrd(boot_info_loc);
 	start_gdt();
 	setup_tss();
 	init_pagetables();

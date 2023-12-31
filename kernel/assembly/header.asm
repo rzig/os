@@ -12,7 +12,7 @@ header_start:
     dw 1 ; type = 1
     dw 1 ; flags = 1 (not optional)
     dd request_end - request_start ; size (8 for type and flags, 32 to request tag 3)
-    dd 3; tag type 3 (modules)
+    dw 3; tag type 3 (modules)
     request_end:
 
     ; required end tag

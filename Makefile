@@ -90,14 +90,14 @@ all: bin/$(OS)
 run: bin/$(OS)
 	qemu-system-x86_64 -M q35 -m 4G -cdrom $(OS).iso -boot d -monitor stdio
 
-bin/$(OS): bin/$(KERNEL).bin initrd/$(OS).initrd
+bin/$(OS): bin/$(KERNEL).bin $(OS).initrd
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin
 	cp grub.cfg isodir/boot/grub/grub.cfg
-	cp initrd/$(OS).initrd isodir/boot/$(OS).initrd
+	cp $(OS).initrd isodir/boot/$(OS).initrd
 	grub-mkrescue -o $(OS).iso isodir
 
-initrd/$(OS).initrd:
-	tar cf initrd/$(OS).initrd initrd
+$(OS).initrd:
+	tar cf $(OS).initrd initrd
 
 # Link rules for the final kernel executable.
 bin/$(KERNEL).bin: linker.ld $(OBJ)
