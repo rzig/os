@@ -85,3 +85,5 @@ void printf_top(char *format, ...);
 
 // a very basic implementation that only works for positive non zero numbers
 int intLog2(int input);
+
+int strcmp(const char* s1, const char* s2);

@@ -12,7 +12,7 @@ enablePaging:
     push %ebp
     mov %esp, %ebp
     mov %cr0, %eax
-    or $0x8000000, %eax
+    or $(1<<31), %eax
     mov %eax, %cr0
     mov %ebp, %esp
     pop %ebp

@@ -7,7 +7,7 @@ override MAKEFLAGS += -rR
 # This is the name that our final kernel executable will have.
 # Change as needed.
 override KERNEL := kernel
-override OS := gladOS
+override OS := glados
 # Convenience macro to reliably declare user overridable variables.
 define DEFAULT_VAR =
     ifeq ($(origin $1),default)
@@ -90,11 +90,14 @@ all: bin/$(OS)
 run: bin/$(OS)
 	qemu-system-x86_64 -M q35 -m 4G -cdrom $(OS).iso -boot d -monitor stdio
 
-bin/$(OS): bin/$(KERNEL).bin
+bin/$(OS): bin/$(KERNEL).bin $(OS).initrd
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin
-	echo menuentry "$(OS)" { multiboot /boot/$(KERNEL).bin } > grub.cfg
 	cp grub.cfg isodir/boot/grub/grub.cfg
+	cp $(OS).initrd isodir/boot/$(OS).initrd
 	grub-mkrescue -o $(OS).iso isodir
+
+$(OS).initrd:
+	tar cf $(OS).initrd initrd
 
 # Link rules for the final kernel executable.
 bin/$(KERNEL).bin: linker.ld $(OBJ)
