@@ -7,7 +7,7 @@ override MAKEFLAGS += -rR
 # This is the name that our final kernel executable will have.
 # Change as needed.
 override KERNEL := kernel
-override OS := gladOS
+override OS := glados
 # Convenience macro to reliably declare user overridable variables.
 define DEFAULT_VAR =
     ifeq ($(origin $1),default)

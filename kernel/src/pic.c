@@ -46,11 +46,8 @@ void OCW(uint8_t flags) {}
 // for this
 void initialize_pic() {
   asm volatile("cli");
-  terminal_writestring("starting init of PIC\n");
   uint8_t orig_m_flags = inb(PIC_M_DATA);
   uint8_t orig_s_flags = inb(PIC_S_DATA);
-  printf("original m flags: %d\n", orig_m_flags);
-  printf("original s flags: %d\n", orig_s_flags);
   outb(PIC_M_COMMAND, (ICW1_FLAG | ICW4_REQ));
   io_wait();
   outb(PIC_S_COMMAND, (ICW1_FLAG | ICW4_REQ));
@@ -74,7 +71,6 @@ void initialize_pic() {
   io_wait();
   outb(PIC_S_DATA, 0);
   io_wait(); // not needed probably
-  terminal_writestring("finished setup PIC\n");
 }
 
 void PIC_sendEOI(unsigned char irq) {

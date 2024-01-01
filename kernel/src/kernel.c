@@ -21,11 +21,11 @@ void kernel_main(void)
 	/* Initialize terminal interface */
 	terminal_initialize(); // this likely clobbers ebx
 	void* initrd_loc = load_initrd(boot_info_loc);
-	printf("Loaded initrd at %d \n", initrd_loc);
+	// printf("Loaded initrd at %d \n", initrd_loc);
 	// print_files(initrd_loc);
 	void* hello_contents = contents(initrd_loc, "initrd/hello.txt");
 	if(hello_contents == 0) {
-		printf("COuld not get file\n");
+		printf("Could not get file\n");
 	} else {
 		printf("initrd/hello.txt contains %s \n", hello_contents);
 	}

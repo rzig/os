@@ -19,9 +19,6 @@ void keyboard_init() {
   outb(0x64, 0x20); // tell the PS2 Controller that we want to read
   uint8_t config = inb(0x60);
   bool dual_ps2 = config & 0b10000;
-  if (dual_ps2) {
-    printf("we have a dually\n");
-  }
   outb(0x64, 0x60);
   uint8_t new_config = config & 0b10111100;
   io_wait();
@@ -81,8 +78,6 @@ void keyboard_init() {
   outb(0x60, 0xF0);
   outb(0x60, 0x01);
   uint8_t status = inb(0x60);
-
-  printf("finished ps2 init\n");
 }
 
 uint16_t keyboard_parsekey(uint16_t key) {

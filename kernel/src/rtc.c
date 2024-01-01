@@ -12,8 +12,6 @@ void set_rtc_freq(uint16_t freq) {
   asm volatile("cli");
   int freql2 = intLog2(freq);
   int rate = intLog2(32768) - freql2 + 1;
-  printf("calculated rate is: %h\n", rate);
-  printf("int log 2 of freq is: %h\n", freql2);
   rate &= 0x0F;
   outb(RTC_COMMAND, 0x8A);
   uint8_t curr = inb(RTC_DATA);
