@@ -98,6 +98,10 @@ _start:
 	jmp page_start
 
 .kernel_continue:
+
+	add $page_dir_top, %edx
+	mov $0x02, %ecx
+	mov %ecx, 0(%edx)
 	/*
 	This is a good place to initialize crucial processor state before the
 	high-level kernel is entered. It's best to minimize the early
