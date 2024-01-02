@@ -23,7 +23,7 @@ GTDDescriptor; // lower 16 bits are the size of gdt, upper 32 are the loc(32 bit
 
 void __attribute__((cdecl))
 setup_gdt(GTDDescriptor *descriptor, uint16_t CODE_SEG, uint16_t DATA_SEG);
-void start_gdt();
+void __attribute__((cdecl)) start_gdt();
 
 GDTEntry *get_entry(int idx);
 void set_gdt_entry(GDTEntry *current, uint32_t base, uint32_t limit,

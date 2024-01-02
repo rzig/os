@@ -53,6 +53,7 @@ GTDDescriptor curr_desc = {sizeof(gdt_main) - 1, // limit is size - 1
 
 void start_gdt() {
   setup_gdt(&curr_desc, KERNEL_CODE_SEGMENT, KERNEL_DATA_SEGMENT);
+  return;
 }
 
 void set_gdt_entry(GDTEntry *current, uint32_t base, uint32_t limit,
