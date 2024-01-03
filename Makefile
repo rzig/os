@@ -96,7 +96,7 @@ bin/$(OS): bin/$(KERNEL).bin $(OS).initrd
 	cp $(OS).initrd isodir/boot/$(OS).initrd
 	grub-mkrescue -o $(OS).iso isodir
 
-$(OS).initrd:
+$(OS).initrd: programs
 	tar cf $(OS).initrd initrd
 
 # Link rules for the final kernel executable.
@@ -125,6 +125,7 @@ clean:
 	rm -rf bin obj
 	rm -rf programs/out
 	rm -rf initrd/programs
+	rm -rf $(OS).initrd
 
 # Generate user-space programs
 .PHONY: programs

@@ -87,3 +87,6 @@ void printf_top(char *format, ...);
 int intLog2(int input);
 
 int strcmp(const char* s1, const char* s2);
+
+
+typedef void (*callable_program)(void);
