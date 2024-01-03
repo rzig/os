@@ -123,3 +123,14 @@ obj/%.asm.o: kernel/assembly/%.asm
 .PHONY: clean
 clean:
 	rm -rf bin obj
+	rm -rf programs/out
+	rm -rf initrd/programs
+
+# Generate user-space programs
+.PHONY: programs
+programs: initrd/programs
+	cd programs && make && cd ..
+	cp -r programs/out/* initrd/programs/
+
+initrd/programs:
+	mkdir initrd/programs
