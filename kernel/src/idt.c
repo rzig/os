@@ -29,13 +29,7 @@ void __attribute__((cdecl)) int_handler(exn_info register_values) {
   if (register_values.int_number >= 32) {
     execute_user_int(register_values);
   } else {
-    terminal_writestring("exception!!!\n");
-    char buffer2[20];
-    itoa(buffer2, 'd', interrupt_counter);
-    terminal_writestring("we have called this many times: ");
-    buffer2[strlen(buffer2)] = '\n';
-    terminal_writestring(buffer2);
-    interrupt_counter++;
+    printf("exn code: %u and int number: %d\n", register_values.exn_code, register_values.int_number);
     exn_handler();
   }
 }

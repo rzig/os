@@ -9,6 +9,7 @@
 #include "../includes/initrd.h"
 #include "../includes/tar.h"
 #include "../includes/paging.h"
+#include "../includes/task_scheduler.h"
 
 static void* boot_info_loc;
 
@@ -24,13 +25,13 @@ void kernel_main(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_s
 	printf("page dir top: %h, page table top %h, page stack top: %h, physical start: %h, virtual start: %h, physical end: %h, virtual end: %h\n", page_dir_top, page_table_top, page_stack_top, physical_start, virtual_start, physical_end, virtual_end);
 	setup_kernel_mem();
 	
-
+	boot_info_loc += HIGHER_HALF;
 	/* Initialize terminal interface */
 	
 	printf("boot loc is : %h\n", boot_info_loc);
-	//void* initrd_loc = load_initrd(boot_info_loc);
-	//printf("Loaded initrd at %h \n", initrd_loc);
-	// print_files(initrd_loc);
+	set_initrd_loc(load_initrd(boot_info_loc));
+	printf("Loaded initrd at %h \n", get_initrd_loc());
+	print_files(get_initrd_loc());
 	// void* hello_contents = contents(initrd_loc, "initrd/hello.txt");
 	// if(hello_contents == 0) {
 	// 	printf("Could not get file\n");
@@ -45,12 +46,6 @@ void kernel_main(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_s
 	start_rtc();
 	set_timezone(EST);
 	enable_interrupts(); // after everything has been completed enable interrupts
-	// callable_program dummy = contents(initrd_loc, "initrd/programs/dummy");
-	// if(dummy == NULL) {
-	// 	printf("Error retrieving dummy program");
-	// } else {
-	// 	printf("Executing dummy program");
-	// 	dummy();
-	// }
+	create_process("initrd/programs/dummy");
 	dead_hang(); // idk what else to call this, just loop indefinitely?
 }

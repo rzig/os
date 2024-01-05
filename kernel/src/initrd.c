@@ -15,15 +15,17 @@ void *load_initrd(void *bif_addr) {
       // for now there is only one module, and it's the initial ramdisk
       // we will eventaully need to use cmdline to differentiate
       void* fs_start = (void *)modtag->mod_start;
-      uint32_t original_end = kernel_physical_end;
-      kernel_physical_end = (uint32_t)kernel_physical_end > modtag->mod_end ? kernel_physical_end : modtag->mod_end;
-      while (((uint32_t)kernel_physical_end - original_end) / 4096) {
-        addKernelPage(); // maps the next 4096 free bytes at the top of the kernel heap(which starts at 0xC0500000) to the next available region of physical memory! 
-      }
-      return fs_start;
+      return fs_start + HIGHER_HALF;
     }
     }
   }
   printf("Could not find initrd, returning null pointer.");
   return NULL;
+}
+
+void set_initrd_loc(void* new_loc) {
+  initrd_loc = new_loc;
+}
+void* get_initrd_loc() {
+  return initrd_loc;
 }

@@ -83,8 +83,9 @@ void itoa(char *buf, int base, int d) {
     *p++ = '-';
     buf++;
     ud = -d;
-  } else if (base == 'x')
+  } else if (base == 'x') {
     divisor = 16;
+  }
 
   /* Divide UD by DIVISOR until UD == 0. */
   do {
@@ -183,6 +184,16 @@ void printf(char *format, ...) {
         while (int_buffer[int_idx] != 0) {
           terminal_putchar(int_buffer[int_idx]);
           int_idx++;
+        }
+        break;
+      case 'u':
+        memset(int_buffer, 0, 32);
+        itoa(int_buffer, 'u', *(((int *)arg_ptr)));
+        arg_ptr++;
+        int unsigned_idx = 0;
+        while (int_buffer[unsigned_idx] != 0) {
+          terminal_putchar(int_buffer[unsigned_idx]);
+          unsigned_idx++;
         }
         break;
       case 's':

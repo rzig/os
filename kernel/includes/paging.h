@@ -47,11 +47,15 @@ We make the assumption that page directories and page tables are stored in the k
 
 static const int MAX_PAGES = 1024 * 1024; // we can store at most 4GB of pages
 
-bool isLPage();
+/***
+ * Since physical memory must be continous for large page allocation, currently whenever we free a page we can no longer allocate a large page, this should definitely be fixed at some poitn in the future, this is just for basic process creation
+*/
+void free_page(uint32_t phys_page);
 
-void* pmm_alloc_page(); // returns the pointer to the page allocated
-void* pmem_available(); // returns if there is a page available to allocate
-void free_page(void* phys_page);
+/***
+ * If we free a large page this must mean that large pages are still acceptable.
+*/
+void free_lpage(uint32_t phys_lpage);
 
 //returns the next free page
 void* nextPage();
@@ -99,3 +103,17 @@ void* addPageTableEntry(uint32_t pt_ent, uint32_t ppage_va);
 void setup_kernel_mem(); 
 
 void set_page_variables(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_stack_top, uint32_t physical_start, uint32_t virtual_start, uint32_t physical_end, uint32_t virtual_end);
+
+
+/***
+ * Maps a region with Kernel permissions
+ * Physical memory doesn't need to be continous, however the virtual region needs to be continous.
+ * To simplify things, if a virtual address already has a maping to a page then we will simply unmap it and move it
+*/
+void mapKernelRegion(uint32_t desired_virt_addr, uint32_t region_size); 
+
+/***
+ * Maps a region with User Permissions
+*/
+void mapUserRegion(uint32_t desired_virt_addr, uint32_t region_size);
+
