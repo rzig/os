@@ -4,6 +4,7 @@ ENTRY(_start)
  
 /* Tell where the various sections of the object files will be put in the final
    kernel image. */
+
 SECTIONS
 {
 	/* It used to be universally recommended to use 1M as a start offset,
@@ -18,6 +19,8 @@ SECTIONS
 	   work around this issue. This does not use that feature, so 2M was
 	   chosen as a safer option than the traditional 1M. */
 	. = 0xC0100000 ;
+	kernel_virtual_start = .;
+	kernel_physical_start = . - 0xC0000000;
  
 	/* First put the multiboot header, as it is required to be put very early
 	   in the image or the bootloader won't recognize the file format.
@@ -49,4 +52,7 @@ SECTIONS
  
 	/* The compiler may produce other sections, by default it will put them in
 	   a segment with the same name. Simply add stuff here as needed. */
+	
+	kernel_virtual_end = .;
+	kernel_physical_end = . - 0xC0000000;
 }

@@ -11,6 +11,10 @@ stack is properly aligned and failure to align the stack will result in
 undefined behavior.
 */
 page_start:
+	or $0x80, %edx
+	mov %cr4, %eax
+	or $0x10, %eax
+	mov %eax, %cr4
 	jmp page_entry
 page_entry:
 	mov $1024, %ecx
@@ -50,19 +54,6 @@ page_assign:
 	jmp %eax
 
 
-gdt_null:
-	.quad 0
-kernel_code:
-	.quad 0x00C09A000000FFFF
-kernel_data:
-	.quad 0x00C092000000FFFF
-gdt_end:
-
-gdt_desc:
-	.word (. - gdt_null)
-gdt_desc_loc:
-	.double 0
-
 .section .bss
 .align 16
 stack_bottom:
@@ -78,6 +69,11 @@ page_dir_bottom:
 page_table_top:
 .skip 4096
 page_table_bottom:
+
+.align 4096
+page_stack_top:
+.skip 4096
+page_stack_bottom:
 
 
 /*
@@ -99,9 +95,6 @@ _start:
 
 .kernel_continue:
 
-	add $page_dir_top, %edx
-	mov $0x02, %ecx
-	mov %ecx, 0(%edx)
 	/*
 	This is a good place to initialize crucial processor state before the
 	high-level kernel is entered. It's best to minimize the early
@@ -112,6 +105,7 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
+	
 	mov $stack_top, %esp
 	push %ebx
 	call kernel_init
@@ -123,6 +117,15 @@ _start:
 	stack since (pushed 0 bytes so far), so the alignment has thus been
 	preserved and the call is well defined.
 	*/
+	
+	push $kernel_virtual_end
+	push $kernel_physical_end
+	push $kernel_virtual_start
+	push $kernel_physical_start
+	push $page_stack_top
+	push $page_table_top
+	push $page_dir_top
+
 	call kernel_main
 
 /*
