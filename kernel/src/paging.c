@@ -106,8 +106,8 @@ void setup_kernel_mem() {
   }
 
   for (unsigned int i = 0; i < PD_ENTRIES; i++) {
-    if (!isLPage(kernel_pd[i]) && i != KERNEL_BIOS_IDX) {
-      kernel_pd[i] = rde_start[i*PT_ENTRIES]; // pointer to the start of each page table
+    if (!isLPage(kernel_pd[i])) {
+      kernel_pd[i] = ((uint32_t)rde_start + 4*i*PT_ENTRIES - HIGHER_HALF) | READ_WRITE | PRESENT; // pointer to the start of each page table
     }
   }
   tde_start = addKernelLargePage(); // this should be zero
