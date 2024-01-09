@@ -88,7 +88,7 @@ override OBJ := $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILE
 all: bin/$(OS)
 
 run: bin/$(OS)
-	qemu-system-x86_64 -M q35 -m 8G -cdrom $(OS).iso -boot d -monitor stdio
+	qemu-system-x86_64 -M q35 -m 8G -cdrom $(OS).iso -boot d -monitor stdio -D ./log.txt -d guest_errors
 
 bin/$(OS): bin/$(KERNEL).bin $(OS).initrd
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin

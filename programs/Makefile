@@ -2,8 +2,7 @@
 
 all: out/dummy
 
-out/dummy: out
-	nasm -f bin dummy.S -o out/dummy
-
+out/dummy: out dummy.asm
+	nasm -f bin dummy.asm -o out/dummy
 out:
 	mkdir out

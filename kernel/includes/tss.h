@@ -2,6 +2,7 @@
 #include "gdt.h"
 #include "utilities.h"
 #include <stdint.h>
+#include "paging.h"
 
 #define TSS_OFFSET 0x028
 

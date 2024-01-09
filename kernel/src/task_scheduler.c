@@ -12,7 +12,7 @@ int create_process(char* executable_fname) {
     unsigned int stack_pointer;
     unsigned int stack_segment;
     void* exec_code = contents(get_initrd_loc(), executable_fname);
-    int* test = 0x00000004; 
+    int* test = 0x0020004; 
     printf("still fine?\n");
     printf("exec size is: %u and exec code loc is: %p\n", exec_size, exec_code);
     *test = 3;

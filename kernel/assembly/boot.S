@@ -105,7 +105,12 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
-	
+	mov $page_dir_top, %edx
+	sub $0xC0000000, %edx
+	xor %eax, %eax
+	add $2, %eax
+	mov %eax, 0(%edx)
+
 	mov $stack_top, %esp
 	push %ebx
 	call kernel_init
