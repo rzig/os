@@ -39,7 +39,6 @@ void kernel_main(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_s
 	// 	printf("initrd/hello.txt contains %s \n", hello_contents);
 	// }
 	setup_tss();
-	asm volatile("hlt");
 	//start_idt();
 	//initialize_pic(); // L PIC
 	//keyboard_init();

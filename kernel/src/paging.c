@@ -42,7 +42,6 @@ void free_page(uint32_t phys_page) {
   pmem_stack_start[pmem_stack_loc--] = phys_page;
 }
 void* nextPage() {
-  printf("called next page\n");
   return pmem_stack_start[pmem_stack_loc++];
 }
 
@@ -106,13 +105,13 @@ void setup_kernel_mem() {
   }
   rde_start = addKernelLargePage();
   for (uint32_t i = 0; i  < PT_ENTRIES; i++) {
-    rde_start[PSTACK_IDX*PT_ENTRIES + i] = kernel_pstack_pt[i] | USER_MODE; 
-    rde_start[KERNEL_BIOS_IDX*PT_ENTRIES + i] = kernel_init_pt[i] | USER_MODE;
+    rde_start[PSTACK_IDX*PT_ENTRIES + i] = kernel_pstack_pt[i]; 
+    rde_start[KERNEL_BIOS_IDX*PT_ENTRIES + i] = kernel_init_pt[i];
   }
 
   for (unsigned int i = 0; i < PD_ENTRIES; i++) {
     if (!entryIs(PAGE_4MB, kernel_pd[i])) {
-      kernel_pd[i] = ((uint32_t)rde_start + 4*i*PT_ENTRIES - HIGHER_HALF) | (0x0F & kernel_pd[i]) | USER_MODE; // pointer to the start of each page table, keep the present / read-write flags 
+      kernel_pd[i] = ((uint32_t)rde_start + 4*i*PT_ENTRIES - HIGHER_HALF) | (0x0F & kernel_pd[i]); // pointer to the start of each page table, keep the present / read-write flags 
     }
   }
   tde_start = addKernelLargePage(); // use this for setting up process PD? 
@@ -121,9 +120,7 @@ void setup_kernel_mem() {
 void copy_rde_tde() {
   memcpy(tde_start, rde_start, LPAGE_SIZE);
 }
-void report_pd() {
-  printf("pd is: %h, value: %h\n", &kernel_pd, kernel_pd);
-}
+
 
 void set_page_variables(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_stack_top, uint32_t physical_start, uint32_t virtual_start, uint32_t physical_end, uint32_t virtual_end) {
   kernel_pd = page_dir_top;
@@ -138,15 +135,17 @@ void set_page_variables(uint32_t page_dir_top, uint32_t page_table_top, uint32_t
 
 void* addPageAt(uint32_t virt_addr) {
   if (!entryIs(PRESENT, kernel_pd[virt_addr >> 22])) {
-    kernel_pd[virt_addr >> 22] |= READ_WRITE | PRESENT | USER_MODE; // again this is not ideal. we should not map page tables unless nescessary but I don't currently have a better way to do this(so right now the page directory is in essence not being utilized properly as all mappings are stored in memory)
-    uint32_t pt_ent = rde_start[virt_addr >> 12];
+    kernel_pd[virt_addr >> 22] |=  PRESENT | READ_WRITE;
+    uint32_t pt_ent = rde_start[virt_addr >> 12]; // again this is not ideal. we should not map page tables unless nescessary but I don't currently have a better way to do this(so right now the page directory is in essence not being utilized properly as all mappings are stored in memory)
     if (!entryIs(PRESENT, pt_ent)) {
-      rde_start[virt_addr >> 12] = (uint32_t)nextPage() | READ_WRITE | PRESENT | USER_MODE; 
+      uint32_t page_padr = (uint32_t) nextPage();
+      rde_start[virt_addr >> 12] = page_padr | READ_WRITE | PRESENT; 
     }
   } else {
+      kernel_pd[virt_addr >> 22] |= USER_MODE;
       uint32_t pt_ent = rde_start[virt_addr >> 12];
       if (!entryIs(PRESENT, pt_ent)) {
-        rde_start[virt_addr >> 12] = (uint32_t) nextPage() | READ_WRITE | PRESENT | USER_MODE; 
+        rde_start[virt_addr >> 12] = (uint32_t) nextPage() | READ_WRITE | PRESENT; 
       }
   }
   return virt_addr;
@@ -205,12 +204,6 @@ void mapUserRegion(uint32_t desired_virt_addr, uint32_t region_size) {
   }
   while (region_size) {
     uint32_t ret_val = addUserPageAt(desired_virt_addr);
-    if (!entryIs(PRESENT, kernel_pd[ret_val>>22])) {
-      if (ret_val != desired_virt_addr) {
-        printf("another error!\n");
-      }
-      printf("error?\n");
-    }
     if (PAGE_SIZE >= region_size) {
       break;
     }
