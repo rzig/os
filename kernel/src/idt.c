@@ -25,7 +25,6 @@ void set_idt_entry(int entry_number, uint8_t flags, uint16_t segment_selector,
 }
 
 void __attribute__((cdecl)) int_handler(exn_info register_values) {
-
   if (register_values.int_number >= 32) {
     execute_user_int(register_values);
   } else {

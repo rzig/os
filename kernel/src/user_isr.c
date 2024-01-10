@@ -1,4 +1,5 @@
 #include "../includes/user_isr.h"
+#include "../includes/syscalls.h"
 
 void execute_user_int(exn_info int_data) {
   int int_number = int_data.int_number;

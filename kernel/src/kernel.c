@@ -38,14 +38,15 @@ void kernel_main(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_s
 	// } else {
 	// 	printf("initrd/hello.txt contains %s \n", hello_contents);
 	// }
+	
+	start_idt();
 	setup_tss();
-	//start_idt();
-	//initialize_pic(); // L PIC
-	//keyboard_init();
-	//set_rtc_freq(128);
-	//start_rtc();
-	//set_timezone(EST);
-	//enable_interrupts(); // after everything has been completed enable interrupts
-	create_process("initrd/programs/dummy");
+	initialize_pic(); // L PIC
+	keyboard_init();
+	set_rtc_freq(128);
+	start_rtc();
+	set_timezone(EST);
+	enable_interrupts(); // after everything has been completed enable interrupts
+	create_process("initrd/programs/simple_program");
 	dead_hang(); // idk what else to call this, just loop indefinitely?
 }

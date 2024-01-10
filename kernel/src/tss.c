@@ -34,9 +34,10 @@ tss_entry kernel_tss = {
 };
 
 void setup_tss() {
-  GDTEntry *tss_entry = get_entry(TSS_IDX);
-  set_gdt_entry(tss_entry, (uint32_t)&kernel_tss, sizeof(kernel_tss) - 1,
-                tss_entry->access, tss_entry->flags);
-  tss_descriptor kernel_tss_desc = {TSS_OFFSET | 0x03, *tss_entry};
-  init_tss(&kernel_tss_desc);
+    kernel_tss.esp0 = addKernelPage() + PAGE_SIZE - 4;
+    GDTEntry *tss_entry = get_entry(TSS_IDX);
+    set_gdt_entry(tss_entry, (uint32_t)&kernel_tss, sizeof(kernel_tss) - 1,
+                    tss_entry->access, tss_entry->flags);
+    tss_descriptor kernel_tss_desc = {TSS_OFFSET | 0x03, *tss_entry};
+    init_tss(&kernel_tss_desc);
 }

@@ -9,14 +9,13 @@ call_user:
     mov es, ax
     mov fs, ax
     mov gs, ax
-
 	push 0x20 | 3
     push 0xBFFFFFFC
-    pushf                  ;interrupts are off
+    pushfd
+    or dword [esp], 0x200
     push 0x18 | 3
     push 0x0
     iret
 
-test_fun:
-    mov eax, 0xaaaaaaaa
-    jmp dead_hang
+test_user:
+    jmp test_user

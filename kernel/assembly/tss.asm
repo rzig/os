@@ -4,6 +4,6 @@ global init_tss
 
 init_tss:
     cli
-    mov eax, [esp + 4]
-    ltr [eax] ; we pass a pointer into the stack so we need to dereference it
+    mov eax, 0x28
+    ltr ax
     ret

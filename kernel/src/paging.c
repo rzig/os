@@ -67,8 +67,12 @@ void* addKernelPage() {
     return NULL;
   }
   //rde contains all the page tables(again this is sorta lazy we don't really want all page tables mapped in memory but later we shall clean this up). Also this does not take into account how large pages will deactivate some of the page tables... so we need to watch for that and come up with a soln. Theoretically should be fine until we add deallocation
-
-  rde_start[phys_addr >> 12] = phys_addr | READ_WRITE | PRESENT; // for user page we will need to add the user flag 
+  if (!entryIs(PRESENT, kernel_pd[(uint32_t)kernel_virtual_end >> 22])) {
+    kernel_pd[(uint32_t)kernel_virtual_end >> 22] |= PRESENT | READ_WRITE;
+  }
+  rde_start[(uint32_t)kernel_virtual_end >> 12] = phys_addr | READ_WRITE | PRESENT; // for user page we will need to add the user flag 
+  printf("kernel virtual end is: %p\n", kernel_virtual_end);
+  printf("phys addr or'd is: %p\n", phys_addr | READ_WRITE | PRESENT);
   void* old_addr = kernel_virtual_end;
   kernel_virtual_end += PAGE_SIZE;
   return old_addr;
