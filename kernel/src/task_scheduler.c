@@ -14,8 +14,6 @@ int create_process(char* executable_fname) {
     void* exec_code = contents(get_initrd_loc(), executable_fname);
     memcpy(0x00000000, exec_code, exec_size);
     mapUserRegion(0xBFFFF000, PAGE_SIZE); // stack
-    asm volatile("cli");
-    asm volatile("hlt");
     call_user(); 
     return 0;
 }

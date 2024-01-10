@@ -5,7 +5,7 @@ tss_entry kernel_tss = {
     // I believe that these should be set before a context switch to have the
     // most up to date values
     0, // link;
-    0xC1200000, // esp0
+    0, // esp0
     0x10, // ss0; //stored stack segs go on lower 2 bytes
     0, // esp1;
     0, // ss1;

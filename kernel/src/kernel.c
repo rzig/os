@@ -45,8 +45,8 @@ void kernel_main(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_s
 	keyboard_init();
 	set_rtc_freq(128);
 	start_rtc();
-	set_timezone(EST);
+	set_timezone(CST);
 	enable_interrupts(); // after everything has been completed enable interrupts
-	create_process("initrd/programs/simple_program");
+	create_process("initrd/programs/dummy");
 	dead_hang(); // idk what else to call this, just loop indefinitely?
 }
