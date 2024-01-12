@@ -4,3 +4,5 @@ isodir/
 *.bin
 *.iso
 *.initrd
+programs/out/
+initrd/programs/

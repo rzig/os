@@ -11,6 +11,9 @@ loadPageDirectory:
 enablePaging:
     push %ebp
     mov %esp, %ebp
+    hlt
+    mov 8(%esp), %eax
+    mov %eax, %cr3
     mov %cr0, %eax
     or $(1<<31), %eax
     mov %eax, %cr0

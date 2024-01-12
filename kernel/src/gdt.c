@@ -10,7 +10,6 @@ typedef enum {
   DATA = (0x02) << 3,
   CODE_READABLE = 0x02,
   DATA_WRITEABLE = 0x02,
-
 } gdt_access;
 
 // only declare the top flags, use limit base below
@@ -40,19 +39,21 @@ GDTEntry gdt_main[] = {
              GRANULARITY_4K | PROTMODE),
     GDTEntry(0, 0xFFFFF, DATA_WRITEABLE | DATA | KERNEL | PRESENT,
              GRANULARITY_4K | PROTMODE),
-    GDTEntry(0, 0xFFFFF, CODE_READABLE | CODE | USER | PRESENT,
-             GRANULARITY_4K | PROTMODE),
-    GDTEntry(0, 0xFFFFF, DATA_WRITEABLE | DATA | USER | PRESENT,
-             GRANULARITY_4K | PROTMODE),
+    GDTEntry(0, 0xFFFFF, 0xFA,
+             0xC0),
+    GDTEntry(0, 0xFFFFF, 0xF2,
+            0xC0),
     GDTEntry(0, 0, KERNEL | PRESENT | 0b01 | 0b1000,
              0x0), // set tss to zero for now and update later
 };
+
 
 GTDDescriptor curr_desc = {sizeof(gdt_main) - 1, // limit is size - 1
                            gdt_main};
 
 void start_gdt() {
   setup_gdt(&curr_desc, KERNEL_CODE_SEGMENT, KERNEL_DATA_SEGMENT);
+  return;
 }
 
 void set_gdt_entry(GDTEntry *current, uint32_t base, uint32_t limit,

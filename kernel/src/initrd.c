@@ -14,10 +14,18 @@ void *load_initrd(void *bif_addr) {
       struct multiboot_tag_module *modtag = (void *)tag;
       // for now there is only one module, and it's the initial ramdisk
       // we will eventaully need to use cmdline to differentiate
-      return (void *)modtag->mod_start;
+      void* fs_start = (void *)modtag->mod_start;
+      return fs_start + HIGHER_HALF;
     }
     }
   }
   printf("Could not find initrd, returning null pointer.");
   return NULL;
+}
+
+void set_initrd_loc(void* new_loc) {
+  initrd_loc = new_loc;
+}
+void* get_initrd_loc() {
+  return initrd_loc;
 }

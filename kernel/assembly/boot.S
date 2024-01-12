@@ -10,11 +10,71 @@ System V ABI standard and de-facto extensions. The compiler will assume the
 stack is properly aligned and failure to align the stack will result in
 undefined behavior.
 */
+page_start:
+	or $0x80, %edx
+	mov %cr4, %eax
+	or $0x10, %eax
+	mov %eax, %cr4
+	jmp page_entry
+page_entry:
+	mov $1024, %ecx
+	cmp %eax, %ecx
+	je page_assign
+	mov %eax, %edx 
+	imul $0x04, %edx
+	add $page_dir_top, %edx
+	sub $0xC0000000, %edx
+	mov $0x02, %ecx
+	mov %ecx, 0(%edx)
+	mov $0x1000, %ecx
+	imul %eax, %ecx
+	add $0x03, %ecx
+	mov %eax, %edx 
+	imul $0x04, %edx
+	add $page_table_top, %edx
+	sub $0xC0000000, %edx
+	mov %ecx, 0(%edx)
+	add $1, %eax
+	jmp page_entry
+page_assign:
+	mov $page_table_top, %eax
+	sub $0xC0000000, %eax
+	mov $page_dir_top, %edx
+	sub $0xC0000000, %edx
+	or $0x03, %eax
+	mov %eax, 0(%edx)
+	mov %eax, 3072(%edx)
+	mov $page_dir_top, %eax
+	sub $0xC0000000, %eax
+    mov %eax, %cr3
+    mov %cr0, %eax
+    or $(1<<31), %eax
+    mov %eax, %cr0
+	lea .kernel_continue, %eax
+	jmp %eax
+
+
 .section .bss
 .align 16
 stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
+
+.align 4096
+page_dir_top:
+.skip 4096
+page_dir_bottom:
+
+.align 4096
+page_table_top:
+.skip 4096
+page_table_bottom:
+
+.align 4096
+page_stack_top:
+.skip 4096
+page_stack_bottom:
+
 
 /*
 The linker script specifies _start as the entry point to the kernel and the
@@ -30,7 +90,11 @@ _start:
 	stack (as it grows downwards on x86 systems). This is necessarily done
 	in assembly as languages such as C cannot function without a stack.
 	*/
-	mov $stack_top, %esp
+	xor %eax, %eax
+	jmp page_start
+
+.kernel_continue:
+
 	/*
 	This is a good place to initialize crucial processor state before the
 	high-level kernel is entered. It's best to minimize the early
@@ -41,6 +105,13 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
+	mov $page_dir_top, %edx
+	sub $0xC0000000, %edx
+	xor %eax, %eax
+	add $2, %eax
+	mov %eax, 0(%edx)
+
+	mov $stack_top, %esp
 	push %ebx
 	call kernel_init
 	/*
@@ -51,6 +122,15 @@ _start:
 	stack since (pushed 0 bytes so far), so the alignment has thus been
 	preserved and the call is well defined.
 	*/
+	
+	push $kernel_virtual_end
+	push $kernel_physical_end
+	push $kernel_virtual_start
+	push $kernel_physical_start
+	push $page_stack_top
+	push $page_table_top
+	push $page_dir_top
+
 	call kernel_main
 
 /*

@@ -88,7 +88,7 @@ override OBJ := $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILE
 all: bin/$(OS)
 
 run: bin/$(OS)
-	qemu-system-x86_64 -M q35 -m 4G -cdrom $(OS).iso -boot d -monitor stdio
+	qemu-system-x86_64 -M q35 -m 8G -cdrom $(OS).iso -boot d -monitor stdio -D ./log.txt -d guest_errors
 
 bin/$(OS): bin/$(KERNEL).bin $(OS).initrd
 	cp bin/$(KERNEL).bin isodir/boot/$(KERNEL).bin
@@ -96,7 +96,7 @@ bin/$(OS): bin/$(KERNEL).bin $(OS).initrd
 	cp $(OS).initrd isodir/boot/$(OS).initrd
 	grub-mkrescue -o $(OS).iso isodir
 
-$(OS).initrd:
+$(OS).initrd: programs
 	tar cf $(OS).initrd initrd
 
 # Link rules for the final kernel executable.
@@ -123,3 +123,15 @@ obj/%.asm.o: kernel/assembly/%.asm
 .PHONY: clean
 clean:
 	rm -rf bin obj
+	rm -rf programs/out
+	rm -rf initrd/programs
+	rm -rf $(OS).initrd
+
+# Generate user-space programs
+.PHONY: programs
+programs: initrd/programs
+	cd programs && make && cd ..
+	cp -r programs/out/* initrd/programs/
+
+initrd/programs:
+	mkdir initrd/programs

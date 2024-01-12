@@ -1,11 +1,12 @@
 #include "../includes/tss.h"
 
+
 tss_entry kernel_tss = {
     // I believe that these should be set before a context switch to have the
     // most up to date values
     0, // link;
     0, // esp0
-    0, // ss0; //stored stack segs go on lower 2 bytes
+    0x10, // ss0; //stored stack segs go on lower 2 bytes
     0, // esp1;
     0, // ss1;
     0, // esp2;
@@ -33,9 +34,10 @@ tss_entry kernel_tss = {
 };
 
 void setup_tss() {
-  GDTEntry *tss_entry = get_entry(TSS_IDX);
-  set_gdt_entry(tss_entry, (uint32_t)&kernel_tss, sizeof(kernel_tss) - 1,
-                tss_entry->access, tss_entry->flags);
-  tss_descriptor kernel_tss_desc = {TSS_OFFSET, *tss_entry};
-  init_tss(&kernel_tss_desc);
+    kernel_tss.esp0 = addKernelPage() + PAGE_SIZE - 4;
+    GDTEntry *tss_entry = get_entry(TSS_IDX);
+    set_gdt_entry(tss_entry, (uint32_t)&kernel_tss, sizeof(kernel_tss) - 1,
+                    tss_entry->access, tss_entry->flags);
+    tss_descriptor kernel_tss_desc = {TSS_OFFSET | 0x0, *tss_entry};
+    init_tss(&kernel_tss_desc);
 }

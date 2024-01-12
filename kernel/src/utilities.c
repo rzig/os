@@ -10,7 +10,7 @@ void terminal_initialize(void) {
   terminal_row = 1; // reserve the top row for the date
   terminal_column = 0;
   terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-  terminal_buffer = (uint16_t *)0xB8000;
+  terminal_buffer = (uint16_t *)0xC00B8000;
   for (size_t y = 0; y < VGA_HEIGHT; y++) {
     for (size_t x = 0; x < VGA_WIDTH; x++) {
       const size_t index = y * VGA_WIDTH + x;
@@ -83,8 +83,9 @@ void itoa(char *buf, int base, int d) {
     *p++ = '-';
     buf++;
     ud = -d;
-  } else if (base == 'x')
+  } else if (base == 'x') {
     divisor = 16;
+  }
 
   /* Divide UD by DIVISOR until UD == 0. */
   do {
@@ -183,6 +184,16 @@ void printf(char *format, ...) {
         while (int_buffer[int_idx] != 0) {
           terminal_putchar(int_buffer[int_idx]);
           int_idx++;
+        }
+        break;
+      case 'u':
+        memset(int_buffer, 0, 32);
+        itoa(int_buffer, 'u', *(((int *)arg_ptr)));
+        arg_ptr++;
+        int unsigned_idx = 0;
+        while (int_buffer[unsigned_idx] != 0) {
+          terminal_putchar(int_buffer[unsigned_idx]);
+          unsigned_idx++;
         }
         break;
       case 's':

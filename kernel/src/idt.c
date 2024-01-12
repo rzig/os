@@ -25,17 +25,11 @@ void set_idt_entry(int entry_number, uint8_t flags, uint16_t segment_selector,
 }
 
 void __attribute__((cdecl)) int_handler(exn_info register_values) {
-
   if (register_values.int_number >= 32) {
     execute_user_int(register_values);
   } else {
-    terminal_writestring("exception!!!\n");
-    char buffer2[20];
-    itoa(buffer2, 'd', interrupt_counter);
-    terminal_writestring("we have called this many times: ");
-    buffer2[strlen(buffer2)] = '\n';
-    terminal_writestring(buffer2);
-    interrupt_counter++;
+    printf("exn code: %u and int number: %d\n", register_values.exn_code, register_values.int_number);
+    printf("ss: %h, eip: %h, ds: %h, edx: %h\n", register_values.ss, register_values.eip, register_values.ds, register_values.edx);
     exn_handler();
   }
 }
@@ -554,7 +548,7 @@ void setupISR() {
                 &ISR_ERRROUTINE126);
   set_idt_entry(127, PRESENT | INTERRUPT_GATE32 | KERNEL, KERNEL_CODE_SEGMENT,
                 &ISR_ERRROUTINE127);
-  set_idt_entry(128, PRESENT | INTERRUPT_GATE32 | KERNEL, KERNEL_CODE_SEGMENT,
+  set_idt_entry(128, PRESENT | INTERRUPT_GATE32 | USER, KERNEL_CODE_SEGMENT,
                 &ISR_ERRROUTINE128);
   set_idt_entry(129, PRESENT | INTERRUPT_GATE32 | KERNEL, KERNEL_CODE_SEGMENT,
                 &ISR_ERRROUTINE129);
