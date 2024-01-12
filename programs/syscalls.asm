@@ -42,7 +42,7 @@ close: ;(uint32_t fd);
     int 0x80
     ret
 global getargs
-getargs ;(uint8_t* buf, uint32_t nbytes);
+getargs: ;(uint8_t* buf, uint32_t nbytes);
     mov eax, 6
     mov ebx, [esp + 4]
     mov ecx, [esp + 8]
