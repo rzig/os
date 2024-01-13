@@ -54,17 +54,17 @@ void rtc_display_clock() {
       hours = ((hours >> 4) * 10) + (hours % 16); // convert back to decimal
       hours += current_timezone;
       if (minutes >= 10) {
-        printf_top("%d:%hpm  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:%xpm  %x/%x/%x", hours, minutes, month, day, year);
       } else {
-        printf_top("%d:0%hpm  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:0%xpm  %x/%x/%x", hours, minutes, month, day, year);
       }
     } else {
       hours = ((hours >> 4) * 10) + (hours % 16); // convert back to decimal
       hours += current_timezone;
       if (minutes >= 10) {
-        printf_top("%d:%h  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:%x  %x/%x/%x", hours, minutes, month, day, year);
       } else {
-        printf_top("%d:0%h  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:0%x  %x/%x/%x", hours, minutes, month, day, year);
       }
     }
   } else {

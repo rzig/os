@@ -9,7 +9,7 @@
 typedef struct {
   uint32_t ds; // from push ax but stack is 32 bit aligned
   uint32_t edi, esi, ebp, kern_esp, ebx, edx, ecx, eax;
-  uint32_t exn_code, int_number;
+  uint32_t int_number, exn_code;
   uint32_t eip;
   uint32_t cs;
   uint32_t eflags, esp;

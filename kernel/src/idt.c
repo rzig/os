@@ -29,6 +29,7 @@ void __attribute__((cdecl)) int_handler(exn_info register_values) {
     execute_user_int(register_values);
   } else {
     printf("exn code: %u and int number: %d\n", register_values.exn_code, register_values.int_number);
+    printf("ss: %x, eip: %x, ds: %x, edx: %x\n", register_values.ss, register_values.eip, register_values.ds, register_values.edx);
     exn_handler();
   }
 }
@@ -547,7 +548,7 @@ void setupISR() {
                 &ISR_ERRROUTINE126);
   set_idt_entry(127, PRESENT | INTERRUPT_GATE32 | KERNEL, KERNEL_CODE_SEGMENT,
                 &ISR_ERRROUTINE127);
-  set_idt_entry(128, PRESENT | INTERRUPT_GATE32 | KERNEL, KERNEL_CODE_SEGMENT,
+  set_idt_entry(128, PRESENT | INTERRUPT_GATE32 | USER, KERNEL_CODE_SEGMENT,
                 &ISR_ERRROUTINE128);
   set_idt_entry(129, PRESENT | INTERRUPT_GATE32 | KERNEL, KERNEL_CODE_SEGMENT,
                 &ISR_ERRROUTINE129);

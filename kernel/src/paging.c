@@ -68,11 +68,12 @@ void* addKernelPage() {
   }
   //rde contains all the page tables(again this is sorta lazy we don't really want all page tables mapped in memory but later we shall clean this up). Also this does not take into account how large pages will deactivate some of the page tables... so we need to watch for that and come up with a soln. Theoretically should be fine until we add deallocation
   if (!entryIs(PRESENT, kernel_pd[(uint32_t)kernel_virtual_end >> 22])) {
-    kernel_pd[(uint32_t)kernel_virtual_end >> 22] |= PRESENT | READ_WRITE;
+    kernel_pd[(uint32_t)kernel_virtual_end >> 22] |= PRESENT;
+  }
+  if (!entryIs(READ_WRITE, kernel_pd[(uint32_t)kernel_virtual_end >> 22])) {
+    kernel_pd[(uint32_t)kernel_virtual_end >> 22] |= READ_WRITE;
   }
   rde_start[(uint32_t)kernel_virtual_end >> 12] = phys_addr | READ_WRITE | PRESENT; // for user page we will need to add the user flag 
-  printf("kernel virtual end is: %p\n", kernel_virtual_end);
-  printf("phys addr or'd is: %p\n", phys_addr | READ_WRITE | PRESENT);
   void* old_addr = kernel_virtual_end;
   kernel_virtual_end += PAGE_SIZE;
   return old_addr;
@@ -163,15 +164,15 @@ void* addUserPageAt(uint32_t virt_addr) {
       uint32_t page_padr = (uint32_t) nextPage();
       rde_start[virt_addr >> 12] = page_padr | READ_WRITE | PRESENT | USER_MODE; 
     } else {
-      rde_start[virt_addr >> 12] |= USER_MODE;
+      rde_start[virt_addr >> 12] |= USER_MODE | READ_WRITE;
     }
   } else {
-      kernel_pd[virt_addr >> 22] |= USER_MODE;
+      kernel_pd[virt_addr >> 22] |= USER_MODE | READ_WRITE;
       uint32_t pt_ent = rde_start[virt_addr >> 12];
       if (!entryIs(PRESENT, pt_ent)) {
         rde_start[virt_addr >> 12] = (uint32_t) nextPage() | READ_WRITE | PRESENT | USER_MODE; 
       } else {
-        rde_start[virt_addr >> 12] |= USER_MODE;
+        rde_start[virt_addr >> 12] |= USER_MODE | READ_WRITE;
       }
   }
   return virt_addr;

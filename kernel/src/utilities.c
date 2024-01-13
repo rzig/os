@@ -193,233 +193,69 @@ int memcmp(const void *s1, const void *s2, size_t n) {
   return 0;
 }
 
-// void printf(char *format, ...) {
-//   char **arg_ptr = &format;
-//   arg_ptr++;
-//   char value_buffer[32];
-//   for (size_t i = 0; i < strlen(format); i++) {
-//     if (format[i] != '%') {
-//       terminal_putchar(format[i]);
-//       continue;
-//     }
-//     // read next char and clear buffer
-//     char curr = format[++i];
-//     memset(value_buffer, 0, 32);
-//     switch (curr) {
-//       case 'p':
-//         terminal_write("0x", 2);
-//         itoa(*((int *)arg_ptr++), value_buffer, 16);
-//         // write leading zeros
-//         for (size_t i = 0; i < PTR_WIDTH - strlen(value_buffer); i++) {
-//           terminal_putchar('0');
-//         }
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 'h':
-//         itoa(*((int *)arg_ptr++), value_buffer, 16);
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 'd':
-//         itoa(*((int *)arg_ptr++), value_buffer, 10);
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 'u':
-//         uitoa(*((unsigned int *)arg_ptr++), value_buffer, 10);
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 's':
-//         char *str = *arg_ptr++;
-//         terminal_writestring(str);
-//         break;
-//       default:
-//         terminal_writestring("error in printf\n");
-//         break;
-      
-//     }
-//   }
-// }
-
-// strongly disapprove of this function's existence -_-
-// void printf_top(char *format, ...) {
-//   char **arg_ptr = &format;
-//   arg_ptr++;
-//   char value_buffer[32];
-//   int column_old = terminal_column;
-//   int row_old = terminal_row;
-//   terminal_column = 0;
-//   terminal_row = 0;
-//   for (size_t i = 0; i < strlen(format); i++) {
-//     if (format[i] != '%') {
-//       terminal_putchar(format[i]);
-//       continue;
-//     }
-//     // read next char and clear buffer
-//     char curr = format[++i];
-//     memset(value_buffer, 0, 32);
-//     switch (curr) {
-//       case 'p':
-//         terminal_write("0x", 2);
-//         itoa(*((int *)arg_ptr++), value_buffer, 16);
-//         // write leading zeros
-//         for (size_t i = 0; i < PTR_WIDTH - strlen(value_buffer); i++) {
-//           terminal_putchar('0');
-//         }
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 'h':
-//         itoa(*((int *)arg_ptr++), value_buffer, 16);
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 'd':
-//         itoa(*((int *)arg_ptr++), value_buffer, 10);
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 'u':
-//         uitoa(*((unsigned int *)arg_ptr++), value_buffer, 10);
-//         terminal_writestring(value_buffer);
-//         break;
-//       case 's':
-//         char *str = *arg_ptr++;
-//         terminal_writestring(str);
-//         break;
-//       default:
-//         terminal_writestring("error in printf\n");
-//         break;
-//     }
-//   }
-//   terminal_column = column_old;
-//   terminal_row = row_old;
-// }
 void printf(char *format, ...) {
-  char **arg_ptr = &format;
-  arg_ptr++;
-  char int_buffer[32];
+  char **args = &format;
+  _printf(format, ++args);
+}
+
+// internal printf helper
+void _printf(char* format, char** args) {
+  char value_buffer[32];
   for (size_t i = 0; i < strlen(format); i++) {
     if (format[i] != '%') {
       terminal_putchar(format[i]);
       continue;
-    } 
-    i++;
-    char curr = format[i];
-    memset(int_buffer, 0, 32);
-    switch (curr) {
-    case 'p':
-      terminal_putchar('0');
-      terminal_putchar('x');
-      itoa(*(((int *)arg_ptr++)), int_buffer, 16);
-      for (size_t i = 0; i < PTR_WIDTH - strlen(int_buffer); i++) {
-        terminal_putchar('0');
-      }
-      int ptr_idx = 0;
-      while (int_buffer[ptr_idx] != 0) {
-        terminal_putchar(int_buffer[ptr_idx]);
-        ptr_idx++;
-      }
-      break;
-    case 'h':
-      itoa(*((int *)arg_ptr++), int_buffer, 16);
-      int hex_idx = 0;
-      while (int_buffer[hex_idx] != 0) {
-        terminal_putchar(int_buffer[hex_idx]);
-        hex_idx++;
-      }
-      break;
-    case 'd':
-      itoa(*(((int *)arg_ptr++)), int_buffer, 10);
-      int int_idx = 0;
-      while (int_buffer[int_idx] != 0) {
-        terminal_putchar(int_buffer[int_idx]);
-        int_idx++;
-      }
-      break;
-    case 'u':
-      uitoa(*(((unsigned int *)arg_ptr++)), int_buffer, 16);
-      int unsigned_idx = 0;
-      while (int_buffer[unsigned_idx] != 0) {
-        terminal_putchar(int_buffer[unsigned_idx]);
-        unsigned_idx++;
-      }
-      break;
-    case 's':
-      char *curr_str = *arg_ptr;
-      while (*curr_str != 0) {
-        terminal_putchar(*curr_str);
-        curr_str++;
-      }
-      arg_ptr++;
-      break;
-    default:
-      terminal_writestring("error in printf\n");
-      break;
     }
-    
-  }
-}
-
-void printf_top(char *format, ...) {
-  char **arg_ptr = &format;
-  arg_ptr++;
-  char int_buffer[32];
-  int column_old = terminal_column;
-  int row_old = terminal_row;
-  terminal_column = 0;
-  terminal_row = 0;
-  for (size_t i = 0; i < strlen(format); i++) {
-    if (format[i] != '%') {
-      terminal_putchar(format[i]);
-    } else {
-      i++;
-      char curr = format[i];
-      switch (curr) {
+    // read next char and clear buffer
+    char curr = format[++i];
+    memset(value_buffer, 0, 32);
+    switch (curr) {
       case 'p':
-        terminal_putchar('0');
-        terminal_putchar('x');
-        memset(int_buffer, 0, 32);
-        itoa(*(((int *)arg_ptr++)), int_buffer, 16);
-        for (size_t i = 0; i < PTR_WIDTH - strlen(int_buffer); i++) {
+        terminal_write("0x", 2);
+        itoa(*((int *)args++), value_buffer, 16);
+        // write leading zeros
+        for (size_t i = 0; i < PTR_WIDTH - strlen(value_buffer); i++) {
           terminal_putchar('0');
         }
-        int ptr_idx = 0;
-        while (int_buffer[ptr_idx] != 0) {
-          terminal_putchar(int_buffer[ptr_idx]);
-          ptr_idx++;
-        }
+        terminal_writestring(value_buffer);
         break;
-      case 'h':
-        memset(int_buffer, 0, 32);
-        itoa(*(((int *)arg_ptr++)), int_buffer, 16);
-        int hex_idx = 0;
-        while (int_buffer[hex_idx] != 0) {
-          terminal_putchar(int_buffer[hex_idx]);
-          hex_idx++;
-        }
+      case 'x':
+        itoa(*((int *)args++), value_buffer, 16);
+        terminal_writestring(value_buffer);
         break;
       case 'd':
-        memset(int_buffer, 0, 32);
-        itoa(*(((int *)arg_ptr++)), int_buffer, 10);
-        int int_idx = 0;
-        while (int_buffer[int_idx] != 0) {
-          terminal_putchar(int_buffer[int_idx]);
-          int_idx++;
-        }
+        itoa(*((int *)args++), value_buffer, 10);
+        terminal_writestring(value_buffer);
+        break;
+      case 'u':
+        uitoa(*((unsigned int *)args++), value_buffer, 10);
+        terminal_writestring(value_buffer);
         break;
       case 's':
-        char *curr_str = *arg_ptr;
-        while (*curr_str != 0) {
-          terminal_putchar(*curr_str);
-          curr_str++;
-        }
-        arg_ptr++;
+        char *str = *args++;
+        terminal_writestring(str);
         break;
       default:
         terminal_writestring("error in printf\n");
         break;
-      }
+      
     }
   }
+}
+
+void printf_top(char *format, ...) {
+  char **args = &format;
+  int column_old = terminal_column;
+  int row_old = terminal_row;
+  terminal_column = 0;
+  terminal_row = 0;
+  
+  _printf(format, ++args);
+
   terminal_column = column_old;
   terminal_row = row_old;
 }
+
 int log2(int num) {
   if (num < 0) return -1;
   int count = 0;

@@ -8,6 +8,7 @@ check:
     ret
 
 common_isr: 
+    mov edx, 0xdeadbeef
     pushad 
     xor eax, eax ; 
     mov ax, ds ;store the original segment on the stack
@@ -17,9 +18,7 @@ common_isr:
     mov es, ax
     mov fs, ax
     mov gs, ax ; don't change the stack segment?
-    push esp ; this is used for returning
     call int_handler ; at some point perhaps create a unique execption handler? 
-    add esp, 4 ; slowly restore the stack (don't want to  store the stack in the stack though)
     pop eax 
     mov ds, ax
     mov es, ax
@@ -33,7 +32,6 @@ common_isr:
 %macro ISR_ERRCODE 1 ; macros are name then num args
 global ISR_ERRROUTINE%1
 ISR_ERRROUTINE%1: 
-    push %1 ; errcode
     push %1 ; int number
     jmp common_isr
 %endmacro 
@@ -41,7 +39,7 @@ ISR_ERRROUTINE%1:
 %macro ISR_NOERRCODE 1 
 global ISR_ERRROUTINE%1
 ISR_ERRROUTINE%1: 
-    push 0 ; err code
+    push 0
     push %1 ; int number
     jmp common_isr
 %endmacro 

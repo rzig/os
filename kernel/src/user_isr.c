@@ -3,7 +3,10 @@
 
 void execute_user_int(exn_info int_data) {
   int int_number = int_data.int_number;
-  if (int_number != 32) {
+  if (int_number == 0x80) {
+    handle_syscall(int_data);
+  }
+  else if (int_number != 32) {
     if (int_number != 39 && int_number != 47) {
       if (int_number == 33) { // keyboard
         uint8_t scan_code = inb(0x60);

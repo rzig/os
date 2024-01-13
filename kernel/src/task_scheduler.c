@@ -3,11 +3,10 @@
 int create_process(char* executable_fname) {
     tar_header* executable = get_file_header(get_initrd_loc(), executable_fname);
     if (executable == NULL) {
-        printf("couldn't find executable\n");
+        printf("couldn't find executable %s\n", executable_fname);
         return -1;
     }
     uint32_t exec_size = getsize(executable->size);
-    printf("exec size is: %u\n", exec_size);
     mapUserRegion(0x00000000, exec_size);
     unsigned int stack_pointer;
     unsigned int stack_segment;
