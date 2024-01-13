@@ -69,7 +69,12 @@ void terminal_remove_last();
 void terminal_write(const char *data, size_t size);
 void terminal_writestring(const char *data);
 
-void itoa(char *buf, int base, int d);
+// for internal use only by itoa and uitoa
+void _itoa(int num, char *buffer, unsigned int base, char is_signed);
+
+void itoa(int num, char *buffer, int base);
+void uitoa(unsigned int num, char *buffer, int base);
+
 size_t strlen(const char *str);
 void __attribute__((cdecl)) fail_cpu();
 void __attribute__((cdecl)) dead_hang();
@@ -84,7 +89,7 @@ void printf(char *format, ...); // variable number of args after this
 void printf_top(char *format, ...);
 
 // a very basic implementation that only works for positive non zero numbers
-int intLog2(int input);
+int log2(int num);
 
 int strcmp(const char* s1, const char* s2);
 

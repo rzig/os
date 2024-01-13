@@ -10,8 +10,8 @@ void start_rtc() {
 
 void set_rtc_freq(uint16_t freq) {
   asm volatile("cli");
-  int freql2 = intLog2(freq);
-  int rate = intLog2(32768) - freql2 + 1;
+  int freql2 = log2(freq);
+  int rate = log2(32768) - freql2 + 1;
   rate &= 0x0F;
   outb(RTC_COMMAND, 0x8A);
   uint8_t curr = inb(RTC_DATA);
