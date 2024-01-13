@@ -29,7 +29,7 @@ void __attribute__((cdecl)) int_handler(exn_info register_values) {
     execute_user_int(register_values);
   } else {
     printf("exn code: %u and int number: %d\n", register_values.exn_code, register_values.int_number);
-    printf("ss: %h, eip: %h, ds: %h, edx: %h\n", register_values.ss, register_values.eip, register_values.ds, register_values.edx);
+    printf("ss: %x, eip: %x, ds: %x, edx: %x\n", register_values.ss, register_values.eip, register_values.ds, register_values.edx);
     exn_handler();
   }
 }

@@ -1,6 +1,6 @@
 #include "../includes/syscalls.h"
 uint32_t handle_halt (uint8_t status) {
-    printf("halt with status: %h\n", status);
+    printf("halt with status: %x\n", status);
     // add some code to squash the process?
     asm volatile("hlt");
     return 0;

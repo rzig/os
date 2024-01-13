@@ -10,8 +10,8 @@ void start_rtc() {
 
 void set_rtc_freq(uint16_t freq) {
   asm volatile("cli");
-  int freql2 = intLog2(freq);
-  int rate = intLog2(32768) - freql2 + 1;
+  int freql2 = log2(freq);
+  int rate = log2(32768) - freql2 + 1;
   rate &= 0x0F;
   outb(RTC_COMMAND, 0x8A);
   uint8_t curr = inb(RTC_DATA);
@@ -54,17 +54,17 @@ void rtc_display_clock() {
       hours = ((hours >> 4) * 10) + (hours % 16); // convert back to decimal
       hours += current_timezone;
       if (minutes >= 10) {
-        printf_top("%d:%hpm  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:%xpm  %x/%x/%x", hours, minutes, month, day, year);
       } else {
-        printf_top("%d:0%hpm  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:0%xpm  %x/%x/%x", hours, minutes, month, day, year);
       }
     } else {
       hours = ((hours >> 4) * 10) + (hours % 16); // convert back to decimal
       hours += current_timezone;
       if (minutes >= 10) {
-        printf_top("%d:%h  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:%x  %x/%x/%x", hours, minutes, month, day, year);
       } else {
-        printf_top("%d:0%h  %h/%h/%h", hours, minutes, month, day, year);
+        printf_top("%d:0%x  %x/%x/%x", hours, minutes, month, day, year);
       }
     }
   } else {
