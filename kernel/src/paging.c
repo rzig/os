@@ -216,3 +216,29 @@ void mapUserRegion(uint32_t desired_virt_addr, uint32_t region_size) {
     desired_virt_addr += PAGE_SIZE;
   }
 }
+
+void* extendKernelHeap(uint32_t size) {
+  mapKernelRegion(kernel_virtual_end, size);
+  void* old_top = kernel_virtual_end;
+  kernel_virtual_end += size;
+  return old_top;
+}
+
+
+uint32_t* get_kernel_pd() {
+  return kernel_pd;
+}
+
+uint32_t* get_rde() {
+  return rde_start;
+}
+
+uint32_t* get_tde() {
+  return tde_start;
+}
+
+void page_align_kernel_heap() {
+  if ((uint32_t)kernel_virtual_end % PAGE_SIZE != 0) {
+    kernel_virtual_end += PAGE_SIZE - (((uint32_t) kernel_virtual_end) % PAGE_SIZE);
+  }
+}

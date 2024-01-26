@@ -117,3 +117,15 @@ void mapKernelRegion(uint32_t desired_virt_addr, uint32_t region_size);
 */
 void mapUserRegion(uint32_t desired_virt_addr, uint32_t region_size);
 
+/**
+ * Extends the kernel heap by size and returns a pointer to the old top of the heap (basically kernel malloc)
+ * TODO: test and add error checking
+*/
+void* extendKernelHeap(uint32_t size); 
+
+uint32_t* get_kernel_pd();
+uint32_t* get_rde();
+uint32_t* get_tde();
+
+
+void page_align_kernel_heap();

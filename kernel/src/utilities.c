@@ -275,3 +275,10 @@ int strcmp(const char *s1, const char *s2) {
 
   return (*p1 > *p2) - (*p2 > *p1);
 }
+
+size_t get_terminal_column() {
+  return terminal_column;
+}
+size_t get_terminal_row() {
+  return terminal_row;
+}

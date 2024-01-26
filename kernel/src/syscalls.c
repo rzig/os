@@ -6,24 +6,56 @@ uint32_t handle_halt (uint8_t status) {
     return 0;
 }
 uint32_t handle_execute (const uint8_t* command){
+    bool found_args = false;
+    for (size_t i = 0; i < strlen(command); i++) {
+        if (command[i] == ' ') {
+            found_args = true;
+        }
+        if (found_args) {
+
+        }
+    }
     return 0;
 }
 uint32_t handle_read (uint32_t fd, void* buf, uint32_t nbytes){
+    void* process_addr = get_current_process();
+    read_file(process_addr, fd, nbytes);
+    memcpy(buf, fd, nbytes);
     return 0;
 }
 uint32_t handle_write (uint32_t fd, const void* buf, uint32_t nbytes){
+    void* process_addr = get_current_process();
+    write_file(process_addr, fd, buf, nbytes);
     return 0;
 }
 uint32_t handle_open (const uint8_t* filename){
-    return 0;
+    void* process_addr = get_current_process();
+    int fd = open_file(process_addr);
+    return fd;
 }
 uint32_t handle_close (uint32_t fd){
+    void* process_addr = get_current_process();
+    close_file(process_addr, fd);
     return 0;
 }
 uint32_t handle_getargs (uint8_t* buf, uint32_t nbytes){
-    return 0;
+    void* process_addr = get_current_process();
+    int argc = get_argc(process_addr);
+    char** argv = get_argv(process_addr);
+    uint32_t curr_buf_loc = 0;
+    for(int i = 0; i < argc; i++) {
+        if (nbytes - curr_buf_loc >= strlen(argv[i])) {
+            memcpy(buf + curr_buf_loc, argv[i], strlen(argv[i]));
+        }  else {
+            memcpy(buf + curr_buf_loc, argv[i], nbytes - curr_buf_loc);
+            break;
+        }
+        curr_buf_loc += strlen(argv[i]);
+    }
+    return curr_buf_loc;
 }
 uint32_t handle_vidmap (uint8_t** screen_start){
+    
     return 0;
 }
 uint32_t handle_set_handler(int32_t signum, void* handler_address){

@@ -33,7 +33,7 @@ void kernel_main(uint32_t page_dir_top, uint32_t page_table_top, uint32_t page_s
 	start_rtc();
 	set_timezone(CST);
 	enable_interrupts(); // after everything has been completed enable interrupts
-	create_process("initrd/programs/simple_program");
+	//create_process("initrd/programs/simple_program");
 	dead_hang(); // idk what else to call this, just loop indefinitely?
 
 }

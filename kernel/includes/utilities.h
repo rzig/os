@@ -95,3 +95,6 @@ int strcmp(const char* s1, const char* s2);
 
 
 typedef void (*callable_program)(void);
+
+size_t get_terminal_row();
+size_t get_terminal_column();
